@@ -43,7 +43,7 @@ Support the Armed Forces of Ukraine and People Affected by Russia’s Aggression
 
 ## How can I help improve it?
 The AutoVPNConnect team welcomes feedback and contributions!<br/>
-You can check if it works properly on your motherboard. For many manufacturers, the way of reading data differs a bit, so if you notice any inaccuracies, please send us a pull request. If you have any suggestions or improvements, don't hesitate to create an issue.
+You can check if it works properly on your computer. If you notice any inaccuracies, please send us a pull request. If you have any suggestions or improvements, don't hesitate to create an issue.
 
 ## License
 
