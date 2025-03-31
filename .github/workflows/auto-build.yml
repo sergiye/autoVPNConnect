@@ -16,6 +16,10 @@ jobs:
 
       - uses: dorny/paths-filter@v2
         id: changes
+        with:
+          filters: |
+            buildprops:
+              - 'Directory.Build.props'
 
       - name: Build
         run: msbuild AutoVPNConnect.sln -p:Configuration=Release -m
