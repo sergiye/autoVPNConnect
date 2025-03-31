@@ -348,6 +348,7 @@
       this.ClientSize = new System.Drawing.Size(296, 224);
       this.Controls.Add(this.tabControl);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+      this.MinimizeBox = false;
       this.MaximizeBox = false;
       this.Name = "AutoVpnConnect";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -355,7 +356,6 @@
       this.TransparencyKey = System.Drawing.SystemColors.ActiveBorder;
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AutoVPNConnect_FormClosing);
       this.Load += new System.EventHandler(this.AutoVPNConnect_Load);
-      this.Resize += new System.EventHandler(this.AutoVPNConnect_Resize);
       this.tabControl.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.groupBoxGeneralSettings.ResumeLayout(false);

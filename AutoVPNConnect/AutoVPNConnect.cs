@@ -6,11 +6,14 @@ using System.Reflection;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
+
   public partial class AutoVpnConnect : Form {
+
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
     private readonly Timer mUpdateUiTimer = new Timer();
     private readonly Icon redIcon;
+    private bool canClose = false;
 
     public AutoVpnConnect() {
       InitializeComponent();
@@ -124,45 +127,26 @@ namespace AutoVPNConnect {
       lblConnectionStatus.ForeColor = isConnected ? Color.DarkGreen : Color.Red;
     }
 
-    private void AutoVPNConnect_Resize(object sender, EventArgs e) {
-      if (WindowState == FormWindowState.Minimized) {
-        mNotifyIcon.Visible = true;
-        ShowInTaskbar = false;
-        //mUpdateUiTimer.Enabled = false;
-
-        if (mSettingsManager.GetShowMessagesSetting()) {
-          mNotifyIcon.Text = "AutoVPNConnect";
-          mNotifyIcon.BalloonTipTitle = "AutoVPNConnect";
-          mNotifyIcon.BalloonTipText = "AutoVPNConnect runs in background";
-          mNotifyIcon.ShowBalloonTip(1000);
-        }
-      }
-      else {
-        ShowInTaskbar = true;
-        //mNotifyIcon.Visible = false;
-        //mUpdateUiTimer.Enabled = true;
-        UpdateUi();
-      }
-    }
-
     private void AutoVPNConnect_Load(object sender, EventArgs e) {
       if (mSettingsManager.GetStartApplicationMinimized()) {
-        WindowState = FormWindowState.Minimized;
+        Visible = false;
       }
     }
 
     private void mNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
-      WindowState = FormWindowState.Normal;
-      ShowInTaskbar = true;
-      //mNotifyIcon.Visible = false;
+      Visible = !Visible;
+      if (Visible)
+        Activate();
     }
 
     private void toolStripMenuItemExit_Click(object sender, EventArgs e) {
+      canClose = true;
       Close();
     }
 
     private void AutoVPNConnect_FormClosing(object sender, FormClosingEventArgs e) {
-      mNotifyIcon.Visible = false;
+      Visible = false;
+      e.Cancel = !canClose;
     }
   }
 }
