@@ -1,86 +1,84 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.NetworkInformation;
+using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
-  public partial class AutoVPNConnect : Form {
+  public partial class AutoVpnConnect : Form {
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
-    private readonly Timer mUpdateUITimer = new Timer();
+    private readonly Timer mUpdateUiTimer = new Timer();
 
-    public AutoVPNConnect() {
+    public AutoVpnConnect() {
       InitializeComponent();
       mSettingsManager = new SettingsManager();
       mConnectionManager = new ConnectionManager(ref mSettingsManager);
 
       //Check if there is already a running instance
-      if (Process.GetProcessesByName
-      (System.IO.Path.GetFileNameWithoutExtension(System.Reflection.Assembly.GetEntryAssembly().Location)).Count() > 1) {
+      if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)).Length > 1) {
         MessageBox.Show("AutoVPNConnect is already running.\nIt is recommended to close this instance.", "Warning");
       }
 
       //Init timer
-      mUpdateUITimer.Interval = 3000;
-      mUpdateUITimer.Enabled = true;
-      mUpdateUITimer.Tick += new EventHandler(UpdateUITimer_Tick);
+      mUpdateUiTimer.Interval = 3000;
+      mUpdateUiTimer.Enabled = true;
+      mUpdateUiTimer.Tick += UpdateUITimer_Tick;
 
-      InitUI();
+      InitUi();
     }
 
-    private void InitUI() {
+    private void InitUi() {
       //Go to Settings tab when no settings found
-      if (mSettingsManager.validSettingsFound() == false) {
+      if (SettingsManager.ValidSettingsFound() == false) {
         tabControl.SelectedTab = tabPage2;
       }
       else {
-        lblConnectionName.Text = mSettingsManager.getConnectionName();
-        lblAppEnabled.Text = "Application enabled: " + mSettingsManager.getApplicationEnabledSetting().ToString();
+        lblConnectionName.Text = mSettingsManager.GetConnectionName();
+        lblAppEnabled.Text = "Application enabled: " + mSettingsManager.GetApplicationEnabledSetting().ToString();
       }
 
-      lblConnectionStatus.Text = mConnectionManager.VPNisConnected() ? "Connection status: Connected" : "Connection status: Disconnected";
+      lblConnectionStatus.Text = mConnectionManager.VpNisConnected() ? "Connection status: Connected" : "Connection status: Disconnected";
 
-      checkBoxStartWithSystem.Checked = mSettingsManager.getApplicationStartWithSystem();
-      checkBoxShowMessages.Checked = mSettingsManager.getShowMessagesSetting();
-      checkBoxApplicationEnabled.Checked = mSettingsManager.getApplicationEnabledSetting();
-      checkBoxStartApplicationMinimized.Checked = mSettingsManager.getStartApplicationMinimized();
+      checkBoxStartWithSystem.Checked = mSettingsManager.GetApplicationStartWithSystem();
+      checkBoxShowMessages.Checked = mSettingsManager.GetShowMessagesSetting();
+      checkBoxApplicationEnabled.Checked = mSettingsManager.GetApplicationEnabledSetting();
+      checkBoxStartApplicationMinimized.Checked = mSettingsManager.GetStartApplicationMinimized();
     }
 
     private void comboBoxActiveVPNConnections_DropDown(object sender, EventArgs e) {
       comboBoxActiveVPNConnections.Items.Clear();
-      List<NetworkInterface> VPNConnections = mConnectionManager.getActiveVPNConnections();
+      var vpnConnections = ConnectionManager.GetActiveVpnConnections();
 
-      if (VPNConnections.Count == 0) {
+      if (vpnConnections.Count == 0) {
         MessageBox.Show("Connect to a VPN first");
         try {
-          ProcessStartInfo startInfo = new ProcessStartInfo("NCPA.cpl");
+          var startInfo = new ProcessStartInfo("NCPA.cpl");
           startInfo.UseShellExecute = true;
           Process.Start(startInfo);
         }
         catch {
-          ;
+          //ignore
         }
       }
 
-      foreach (NetworkInterface Interface in VPNConnections) {
-        comboBoxActiveVPNConnections.Items.Add(Interface.Name);
+      foreach (var @interface in vpnConnections) {
+        comboBoxActiveVPNConnections.Items.Add(@interface.Name);
       }
     }
 
     private void btnSaveSettings_Click(object sender, EventArgs e) {
-      string vpnConnectionName = comboBoxActiveVPNConnections.Text;
-      string username = textBoxUsername.Text;
-      string password = textBoxPassword.Text;
+      var vpnConnectionName = comboBoxActiveVPNConnections.Text;
+      var username = textBoxUsername.Text;
+      var password = textBoxPassword.Text;
 
       if (vpnConnectionName == "") {
         MessageBox.Show("Invalid input");
       }
       else {
-        mSettingsManager.setConnectionName(vpnConnectionName);
-        mSettingsManager.setUserName(username);
-        mSettingsManager.setPassword(password);
+        mSettingsManager.SetConnectionName(vpnConnectionName);
+        mSettingsManager.SetUserName(username);
+        mSettingsManager.SetPassword(password);
 
         MessageBox.Show("Settings successfully saved.\n" +
         "AutoVPNConnect will automatically connect to VPN connection: " +
@@ -89,30 +87,30 @@ namespace AutoVPNConnect {
     }
 
     private void checkBoxStartWithSystem_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.setApplicationStartWithSystem(checkBoxStartWithSystem.Checked);
+      mSettingsManager.SetApplicationStartWithSystem(checkBoxStartWithSystem.Checked);
     }
 
     private void checkBoxShowMessages_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.setShowMessages(checkBoxShowMessages.Checked);
+      mSettingsManager.SetShowMessages(checkBoxShowMessages.Checked);
     }
 
     private void checkBoxApplicationEnabled_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.setApplicationEnabledSetting(checkBoxApplicationEnabled.Checked);
+      mSettingsManager.SetApplicationEnabledSetting(checkBoxApplicationEnabled.Checked);
     }
 
     private void checkBoxStartApplicationMinimized_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.setStartApplicationMinimized(checkBoxStartApplicationMinimized.Checked);
+      mSettingsManager.SetStartApplicationMinimized(checkBoxStartApplicationMinimized.Checked);
     }
 
     void UpdateUITimer_Tick(object sender, EventArgs e) {
-      UpdateUI();
+      UpdateUi();
     }
 
-    private void UpdateUI() {
-      lblConnectionName.Text = mSettingsManager.getConnectionName();
-      lblAppEnabled.Text = "Application enabled: " + mSettingsManager.getApplicationEnabledSetting().ToString();
+    private void UpdateUi() {
+      lblConnectionName.Text = mSettingsManager.GetConnectionName();
+      lblAppEnabled.Text = "Application enabled: " + mSettingsManager.GetApplicationEnabledSetting().ToString();
 
-      if (mConnectionManager.VPNisConnected()) {
+      if (mConnectionManager.VpNisConnected()) {
         lblConnectionStatus.Text = "Connection status: Connected";
       }
       else {
@@ -124,9 +122,9 @@ namespace AutoVPNConnect {
       if (WindowState == FormWindowState.Minimized) {
         mNotifyIcon.Visible = true;
         ShowInTaskbar = false;
-        mUpdateUITimer.Enabled = false;
+        mUpdateUiTimer.Enabled = false;
 
-        if (mSettingsManager.getShowMessagesSetting() == true) {
+        if (mSettingsManager.GetShowMessagesSetting()) {
           mNotifyIcon.Text = "AutoVPNConnect";
           mNotifyIcon.BalloonTipTitle = "AutoVPNConnect";
           mNotifyIcon.BalloonTipText = "AutoVPNConnect runs in background";
@@ -136,13 +134,13 @@ namespace AutoVPNConnect {
       else {
         ShowInTaskbar = true;
         mNotifyIcon.Visible = false;
-        mUpdateUITimer.Enabled = true;
-        UpdateUI();
+        mUpdateUiTimer.Enabled = true;
+        UpdateUi();
       }
     }
 
     private void AutoVPNConnect_Load(object sender, EventArgs e) {
-      if (mSettingsManager.getStartApplicationMinimized() == true) {
+      if (mSettingsManager.GetStartApplicationMinimized()) {
         WindowState = FormWindowState.Minimized;
       }
     }

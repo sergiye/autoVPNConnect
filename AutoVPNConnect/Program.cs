@@ -7,7 +7,7 @@ namespace AutoVPNConnect {
     static void Main() {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new AutoVPNConnect());
+      Application.Run(new AutoVpnConnect());
     }
   }
 }

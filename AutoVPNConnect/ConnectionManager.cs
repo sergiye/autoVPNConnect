@@ -7,54 +7,54 @@ using System.Windows.Forms;
 namespace AutoVPNConnect {
   class ConnectionManager {
     readonly SettingsManager mSettingsManager;
-    readonly Timer VPNConnectionCheckTimer = new Timer();
+    private readonly Timer vpnConnectionCheckTimer = new Timer();
 
     public ConnectionManager(ref SettingsManager rSettingsManager) {
       mSettingsManager = rSettingsManager;
 
       //Init timer
-      VPNConnectionCheckTimer.Interval = 15000;
-      VPNConnectionCheckTimer.Enabled = true;
-      VPNConnectionCheckTimer.Tick += new EventHandler(VPNConnectionCheckTimer_Tick);
+      vpnConnectionCheckTimer.Interval = 15000;
+      vpnConnectionCheckTimer.Enabled = true;
+      vpnConnectionCheckTimer.Tick += VPNConnectionCheckTimer_Tick;
     }
 
-    public List<NetworkInterface> getActiveVPNConnections() {
-      List<NetworkInterface> VPNConnections = new List<NetworkInterface>();
+    public static List<NetworkInterface> GetActiveVpnConnections() {
+      var vpnConnections = new List<NetworkInterface>();
 
       if (!NetworkInterface.GetIsNetworkAvailable()) {
-        return VPNConnections;
+        return vpnConnections;
       }
 
-      NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+      var interfaces = NetworkInterface.GetAllNetworkInterfaces();
 
-      foreach (NetworkInterface Interface in interfaces) {
+      foreach (var @interface in interfaces) {
         //Get VPN connections
-        if ((Interface.NetworkInterfaceType == NetworkInterfaceType.Ppp) &&
-        (Interface.NetworkInterfaceType != NetworkInterfaceType.Loopback)) {
-          VPNConnections.Add(Interface);
+        if ((@interface.NetworkInterfaceType == NetworkInterfaceType.Ppp) &&
+        (@interface.NetworkInterfaceType != NetworkInterfaceType.Loopback)) {
+          vpnConnections.Add(@interface);
         }
       }
-      return VPNConnections;
+      return vpnConnections;
     }
 
-    public bool VPNisConnected() {
-      string VPNConnectionName = mSettingsManager.getConnectionName();
+    public bool VpNisConnected() {
+      var vpnConnectionName = mSettingsManager.GetConnectionName();
 
-      List<NetworkInterface> VPNConnections = getActiveVPNConnections();
+      var vpnConnections = GetActiveVpnConnections();
 
-      foreach (NetworkInterface Interface in VPNConnections) {
-        if (Interface.Name == VPNConnectionName) {
-          return Interface.OperationalStatus == OperationalStatus.Up;
+      foreach (var @interface in vpnConnections) {
+        if (@interface.Name == vpnConnectionName) {
+          return @interface.OperationalStatus == OperationalStatus.Up;
         }
       }
       return false;
     }
 
-    private void ConnectToVPN() {
+    private void ConnectToVpn() {
 
-      var vpnName = mSettingsManager.getConnectionName();
-      var userName = mSettingsManager.getUserName();
-      var password = mSettingsManager.getPassword();
+      var vpnName = mSettingsManager.GetConnectionName();
+      var userName = mSettingsManager.GetUserName();
+      var password = mSettingsManager.GetPassword();
 
       ProcessStartInfo procStartInfo;
 
@@ -76,16 +76,15 @@ namespace AutoVPNConnect {
       procStartInfo.CreateNoWindow = true;
       procStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
       //Start the process
-      Process process = new Process();
+      var process = new Process();
       process.StartInfo = procStartInfo;
       process.Start();
     }
 
-    public void CheckConnectionStatus() {
-      if (mSettingsManager.getApplicationEnabledSetting()) {
-        if (VPNisConnected() == false && mSettingsManager.validSettingsFound()) {
-          ConnectToVPN();
-        }
+    private void CheckConnectionStatus() {
+      if (!mSettingsManager.GetApplicationEnabledSetting()) return;
+      if (VpNisConnected() == false && SettingsManager.ValidSettingsFound()) {
+        ConnectToVpn();
       }
     }
 
