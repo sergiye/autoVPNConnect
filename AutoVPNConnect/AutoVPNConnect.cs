@@ -17,7 +17,7 @@ namespace AutoVPNConnect {
 
       //Check if there is already a running instance
       if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)).Length > 1) {
-        MessageBox.Show("AutoVPNConnect is already running.\nIt is recommended to close this instance.", "Warning");
+        MessageBox.Show("AutoVPNConnect is already running.\nIt is recommended to close this instance.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
       //Init timer
@@ -51,7 +51,7 @@ namespace AutoVPNConnect {
       var vpnConnections = ConnectionManager.GetActiveVpnConnections();
 
       if (vpnConnections.Count == 0) {
-        MessageBox.Show("Connect to a VPN first");
+        MessageBox.Show("Connect to a VPN first", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         try {
           var startInfo = new ProcessStartInfo("NCPA.cpl");
           startInfo.UseShellExecute = true;
@@ -73,7 +73,7 @@ namespace AutoVPNConnect {
       var password = textBoxPassword.Text;
 
       if (vpnConnectionName == "") {
-        MessageBox.Show("Invalid input");
+        MessageBox.Show("Invalid input", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
       else {
         mSettingsManager.SetConnectionName(vpnConnectionName);
@@ -82,7 +82,8 @@ namespace AutoVPNConnect {
 
         MessageBox.Show("Settings successfully saved.\n" +
         "AutoVPNConnect will automatically connect to VPN connection: " +
-        vpnConnectionName + "\nWhen this is not working, enter your username and password again.");
+        vpnConnectionName + "\nWhen this is not working, enter your username and password again.", 
+          "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
     }
 

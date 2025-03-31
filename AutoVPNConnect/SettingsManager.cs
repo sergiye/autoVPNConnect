@@ -89,7 +89,7 @@ namespace AutoVPNConnect {
 
       var key = Registry.CurrentUser.OpenSubKey(RegistryPath, true);
       if (key == null) {
-        MessageBox.Show("Error while writing settings", "Error");
+        MessageBox.Show("Error while writing settings", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         return;
       }
 
@@ -104,7 +104,7 @@ namespace AutoVPNConnect {
         key.SetValue("StartApplicationMinimized", startApplicationMinimized, RegistryValueKind.String);
       }
       catch {
-        MessageBox.Show("Error while writing settings");
+        MessageBox.Show("Error while writing settings", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
       key.Close();
@@ -182,7 +182,7 @@ namespace AutoVPNConnect {
         }
       }
       catch {
-        MessageBox.Show("Error while writing settings", "Error");
+        MessageBox.Show("Error while writing settings", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
       startApplicationWithSystem = enabled;
