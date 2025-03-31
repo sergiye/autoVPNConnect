@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -9,21 +10,27 @@ namespace AutoVPNConnect {
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
     private readonly Timer mUpdateUiTimer = new Timer();
+    private readonly Icon redIcon;
 
     public AutoVpnConnect() {
       InitializeComponent();
       
-      Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+      Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       mSettingsManager = new SettingsManager();
       mConnectionManager = new ConnectionManager(ref mSettingsManager);
 
+      var assembly = Assembly.GetExecutingAssembly();
+      using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Red.ico")) {
+        redIcon = new Icon(st);
+      }
+
       //Check if there is already a running instance
-      if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)).Length > 1) {
+      if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(assembly.Location)).Length > 1) {
         MessageBox.Show("AutoVPNConnect is already running.\nIt is recommended to close this instance.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
       //Init timer
-      mUpdateUiTimer.Interval = 3000;
+      mUpdateUiTimer.Interval = 1000;
       mUpdateUiTimer.Enabled = true;
       mUpdateUiTimer.Tick += UpdateUITimer_Tick;
 
@@ -34,13 +41,11 @@ namespace AutoVPNConnect {
       //Go to Settings tab when no settings found
       if (SettingsManager.ValidSettingsFound() == false) {
         tabControl.SelectedTab = tabPage2;
+        lblConnectionStatus.Text = "Connection status: Disconnected";
       }
       else {
-        lblConnectionName.Text = mSettingsManager.GetConnectionName();
-        lblAppEnabled.Text = "Application enabled: " + mSettingsManager.GetApplicationEnabledSetting().ToString();
+        UpdateUi();
       }
-
-      lblConnectionStatus.Text = mConnectionManager.VpNisConnected() ? "Connection status: Connected" : "Connection status: Disconnected";
 
       checkBoxStartWithSystem.Checked = mSettingsManager.GetApplicationStartWithSystem();
       checkBoxShowMessages.Checked = mSettingsManager.GetShowMessagesSetting();
@@ -113,19 +118,17 @@ namespace AutoVPNConnect {
       lblConnectionName.Text = mSettingsManager.GetConnectionName();
       lblAppEnabled.Text = "Application enabled: " + mSettingsManager.GetApplicationEnabledSetting().ToString();
 
-      if (mConnectionManager.VpNisConnected()) {
-        lblConnectionStatus.Text = "Connection status: Connected";
-      }
-      else {
-        lblConnectionStatus.Text = "Connection status: Disconnected";
-      }
+      var isConnected = mConnectionManager.VpNisConnected();
+      mNotifyIcon.Icon = isConnected ? Icon : redIcon;
+      lblConnectionStatus.Text = isConnected ? "Connection status: Connected" : "Connection status: Disconnected";
+      lblConnectionStatus.ForeColor = isConnected ? Color.DarkGreen : Color.Red;
     }
 
     private void AutoVPNConnect_Resize(object sender, EventArgs e) {
       if (WindowState == FormWindowState.Minimized) {
         mNotifyIcon.Visible = true;
         ShowInTaskbar = false;
-        mUpdateUiTimer.Enabled = false;
+        //mUpdateUiTimer.Enabled = false;
 
         if (mSettingsManager.GetShowMessagesSetting()) {
           mNotifyIcon.Text = "AutoVPNConnect";
@@ -136,8 +139,8 @@ namespace AutoVPNConnect {
       }
       else {
         ShowInTaskbar = true;
-        mNotifyIcon.Visible = false;
-        mUpdateUiTimer.Enabled = true;
+        //mNotifyIcon.Visible = false;
+        //mUpdateUiTimer.Enabled = true;
         UpdateUi();
       }
     }
@@ -151,10 +154,10 @@ namespace AutoVPNConnect {
     private void mNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
       WindowState = FormWindowState.Normal;
       ShowInTaskbar = true;
-      mNotifyIcon.Visible = false;
+      //mNotifyIcon.Visible = false;
     }
 
-    private void contextMenuStrip_Click(object sender, EventArgs e) {
+    private void toolStripMenuItemExit_Click(object sender, EventArgs e) {
       Close();
     }
 

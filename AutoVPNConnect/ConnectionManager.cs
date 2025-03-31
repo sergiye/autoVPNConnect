@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
@@ -76,20 +77,19 @@ namespace AutoVPNConnect {
       procStartInfo.CreateNoWindow = true;
       procStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
       //Start the process
-      var process = new Process();
-      process.StartInfo = procStartInfo;
-      process.Start();
-    }
-
-    private void CheckConnectionStatus() {
-      if (!mSettingsManager.GetApplicationEnabledSetting()) return;
-      if (VpNisConnected() == false && SettingsManager.ValidSettingsFound()) {
-        ConnectToVpn();
-      }
+      var process = Process.Start(procStartInfo);
+      Task.Factory.StartNew(async () => {
+        await Task.Delay(60000).ConfigureAwait(false);
+        if (!process.HasExited)
+          process.Kill();
+      });
     }
 
     void VPNConnectionCheckTimer_Tick(object sender, EventArgs e) {
-      CheckConnectionStatus();
+      if (!mSettingsManager.GetApplicationEnabledSetting()) return;
+      if (!VpNisConnected() && SettingsManager.ValidSettingsFound()) {
+        ConnectToVpn();
+      }
     }
   }
 }

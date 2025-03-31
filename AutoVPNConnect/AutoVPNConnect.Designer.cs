@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoVpnConnect));
       this.lblConnectionName = new System.Windows.Forms.Label();
       this.lblConnectsTo = new System.Windows.Forms.Label();
       this.tabControl = new System.Windows.Forms.TabControl();
@@ -56,15 +55,14 @@
       this.comboBoxActiveVPNConnections = new System.Windows.Forms.ComboBox();
       this.lblSelectVPNConnection = new System.Windows.Forms.Label();
       this.mNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-      this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.toolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
+      this.contextMenu = new System.Windows.Forms.ContextMenu();
+      this.menuItemExit = new System.Windows.Forms.MenuItem();
       this.tabControl.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBoxGeneralSettings.SuspendLayout();
       this.groupBoxStatus.SuspendLayout();
       this.tabPage2.SuspendLayout();
       this.groupBoxVPNSettings.SuspendLayout();
-      this.contextMenuStrip.SuspendLayout();
       this.SuspendLayout();
       // 
       // lblConnectionName
@@ -326,26 +324,24 @@
       // 
       // mNotifyIcon
       // 
-      this.mNotifyIcon.ContextMenuStrip = this.contextMenuStrip;
-      this.mNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("mNotifyIcon.Icon")));
+      this.mNotifyIcon.ContextMenu = this.contextMenu;
       this.mNotifyIcon.Visible = true;
       this.mNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mNotifyIcon_MouseDoubleClick);
       // 
-      // contextMenuStrip
+      // contextMenu
       // 
-      this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemExit});
-      this.contextMenuStrip.Name = "contextMenuStrip";
-      this.contextMenuStrip.Size = new System.Drawing.Size(94, 26);
-      this.contextMenuStrip.Click += new System.EventHandler(this.contextMenuStrip_Click);
+      this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemExit});
+      this.contextMenu.Name = "contextMenuStrip";
       // 
-      // toolStripMenuItemExit
+      // menuItemExit
       // 
-      this.toolStripMenuItemExit.Name = "toolStripMenuItemExit";
-      this.toolStripMenuItemExit.Size = new System.Drawing.Size(93, 22);
-      this.toolStripMenuItemExit.Text = "Exit";
+      this.menuItemExit.DefaultItem = true;
+      this.menuItemExit.Name = "toolStripMenuItemExit";
+      this.menuItemExit.Text = "Exit";
+      this.menuItemExit.Click += new System.EventHandler(this.toolStripMenuItemExit_Click);
       // 
-      // AutoVPNConnect
+      // AutoVpnConnect
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -369,7 +365,6 @@
       this.tabPage2.ResumeLayout(false);
       this.groupBoxVPNSettings.ResumeLayout(false);
       this.groupBoxVPNSettings.PerformLayout();
-      this.contextMenuStrip.ResumeLayout(false);
       this.ResumeLayout(false);
 
         }
@@ -401,8 +396,8 @@
         private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
         private System.Windows.Forms.Label lblStartMinimized;
         private System.Windows.Forms.NotifyIcon mNotifyIcon;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemExit;
+        private System.Windows.Forms.ContextMenu contextMenu;
+        private System.Windows.Forms.MenuItem menuItemExit;
 
     }
 }
