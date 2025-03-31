@@ -115,10 +115,10 @@ namespace AutoVPNConnect {
     }
 
     private void UpdateUi() {
-      lblConnectionName.Text = mSettingsManager.GetConnectionName();
-      lblAppEnabled.Text = "Application enabled: " + mSettingsManager.GetApplicationEnabledSetting().ToString();
+      lblConnectionName.Text = mSettingsManager?.GetConnectionName();
+      lblAppEnabled.Text = "Application enabled: " + mSettingsManager?.GetApplicationEnabledSetting().ToString();
 
-      var isConnected = mConnectionManager.VpNisConnected();
+      var isConnected = mConnectionManager?.VpNisConnected() ?? false;
       mNotifyIcon.Icon = isConnected ? Icon : redIcon;
       lblConnectionStatus.Text = isConnected ? "Connection status: Connected" : "Connection status: Disconnected";
       lblConnectionStatus.ForeColor = isConnected ? Color.DarkGreen : Color.Red;
