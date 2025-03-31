@@ -358,7 +358,6 @@
       this.Text = "AutoVPNConnect";
       this.TransparencyKey = System.Drawing.SystemColors.ActiveBorder;
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AutoVPNConnect_FormClosing);
-      this.Load += new System.EventHandler(this.AutoVPNConnect_Load);
       this.tabControl.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.groupBoxGeneralSettings.ResumeLayout(false);

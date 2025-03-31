@@ -14,6 +14,7 @@ namespace AutoVPNConnect {
     private readonly Timer mUpdateUiTimer = new Timer();
     private readonly Icon redIcon;
     private bool canClose = false;
+    private bool showApp = false;
 
     public AutoVpnConnect() {
       InitializeComponent();
@@ -37,24 +38,22 @@ namespace AutoVPNConnect {
       mUpdateUiTimer.Enabled = true;
       mUpdateUiTimer.Tick += UpdateUITimer_Tick;
 
-      InitUi();
-    }
-
-    private void InitUi() {
       //Go to Settings tab when no settings found
       if (SettingsManager.ValidSettingsFound() == false) {
         tabControl.SelectedTab = tabPage2;
         lblConnectionStatus.Text = "Connection status: Disconnected";
       }
-      else {
-        UpdateUi();
-      }
 
       checkBoxStartWithSystem.Checked = mSettingsManager.GetApplicationStartWithSystem();
       checkBoxApplicationEnabled.Checked = mSettingsManager.GetApplicationEnabledSetting();
       checkBoxStartApplicationMinimized.Checked = mSettingsManager.GetStartApplicationMinimized();
+      showApp = !checkBoxStartApplicationMinimized.Checked;
     }
 
+    protected override void SetVisibleCore(bool value) {
+      base.SetVisibleCore(showApp ? value : showApp);
+    }
+    
     private void comboBoxActiveVPNConnections_DropDown(object sender, EventArgs e) {
       comboBoxActiveVPNConnections.Items.Clear();
       var vpnConnections = ConnectionManager.GetActiveVpnConnections();
@@ -109,10 +108,6 @@ namespace AutoVPNConnect {
     }
 
     void UpdateUITimer_Tick(object sender, EventArgs e) {
-      UpdateUi();
-    }
-
-    private void UpdateUi() {
       lblConnectionName.Text = mSettingsManager?.GetConnectionName();
       lblAppEnabled.Text = "Application enabled: " + mSettingsManager?.GetApplicationEnabledSetting().ToString();
 
@@ -122,13 +117,8 @@ namespace AutoVPNConnect {
       lblConnectionStatus.ForeColor = isConnected ? Color.DarkGreen : Color.Red;
     }
 
-    private void AutoVPNConnect_Load(object sender, EventArgs e) {
-      if (mSettingsManager.GetStartApplicationMinimized()) {
-        Visible = false;
-      }
-    }
-
     private void mNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
+      showApp = !showApp;
       Visible = !Visible;
       if (Visible)
         Activate();
@@ -140,6 +130,7 @@ namespace AutoVPNConnect {
     }
 
     private void AutoVPNConnect_FormClosing(object sender, FormClosingEventArgs e) {
+      showApp = false;
       Visible = false;
       e.Cancel = !canClose;
     }
