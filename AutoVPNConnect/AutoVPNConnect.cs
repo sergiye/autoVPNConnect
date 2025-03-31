@@ -51,7 +51,6 @@ namespace AutoVPNConnect {
       }
 
       checkBoxStartWithSystem.Checked = mSettingsManager.GetApplicationStartWithSystem();
-      checkBoxShowMessages.Checked = mSettingsManager.GetShowMessagesSetting();
       checkBoxApplicationEnabled.Checked = mSettingsManager.GetApplicationEnabledSetting();
       checkBoxStartApplicationMinimized.Checked = mSettingsManager.GetStartApplicationMinimized();
     }
@@ -99,10 +98,6 @@ namespace AutoVPNConnect {
 
     private void checkBoxStartWithSystem_CheckedChanged(object sender, EventArgs e) {
       mSettingsManager.SetApplicationStartWithSystem(checkBoxStartWithSystem.Checked);
-    }
-
-    private void checkBoxShowMessages_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.SetShowMessages(checkBoxShowMessages.Checked);
     }
 
     private void checkBoxApplicationEnabled_CheckedChanged(object sender, EventArgs e) {

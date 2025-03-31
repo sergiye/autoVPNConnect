@@ -38,8 +38,6 @@
       this.lblStartMinimized = new System.Windows.Forms.Label();
       this.checkBoxApplicationEnabled = new System.Windows.Forms.CheckBox();
       this.lblApplicationEnabled = new System.Windows.Forms.Label();
-      this.checkBoxShowMessages = new System.Windows.Forms.CheckBox();
-      this.lblShowMessages = new System.Windows.Forms.Label();
       this.checkBoxStartWithSystem = new System.Windows.Forms.CheckBox();
       this.lblStartWithSystem = new System.Windows.Forms.Label();
       this.groupBoxStatus = new System.Windows.Forms.GroupBox();
@@ -55,8 +53,8 @@
       this.comboBoxActiveVPNConnections = new System.Windows.Forms.ComboBox();
       this.lblSelectVPNConnection = new System.Windows.Forms.Label();
       this.mNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-      this.contextMenu = new System.Windows.Forms.ContextMenu();
-      this.menuItemExit = new System.Windows.Forms.MenuItem();
+      this.contextMenuStrip = new System.Windows.Forms.ContextMenu();
+      this.toolStripMenuItemExit = new System.Windows.Forms.MenuItem();
       this.tabControl.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBoxGeneralSettings.SuspendLayout();
@@ -68,19 +66,21 @@
       // lblConnectionName
       // 
       this.lblConnectionName.AutoSize = true;
-      this.lblConnectionName.Location = new System.Drawing.Point(99, 42);
+      this.lblConnectionName.Location = new System.Drawing.Point(148, 65);
+      this.lblConnectionName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectionName.Name = "lblConnectionName";
-      this.lblConnectionName.Size = new System.Drawing.Size(90, 13);
-      this.lblConnectionName.TabIndex = 1;
+      this.lblConnectionName.Size = new System.Drawing.Size(134, 20);
+      this.lblConnectionName.TabIndex = 2;
       this.lblConnectionName.Text = "No settings found";
       // 
       // lblConnectsTo
       // 
       this.lblConnectsTo.AutoSize = true;
-      this.lblConnectsTo.Location = new System.Drawing.Point(7, 42);
+      this.lblConnectsTo.Location = new System.Drawing.Point(10, 65);
+      this.lblConnectsTo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectsTo.Name = "lblConnectsTo";
-      this.lblConnectsTo.Size = new System.Drawing.Size(86, 13);
-      this.lblConnectsTo.TabIndex = 0;
+      this.lblConnectsTo.Size = new System.Drawing.Size(126, 20);
+      this.lblConnectsTo.TabIndex = 1;
       this.lblConnectsTo.Text = "Auto connect to:";
       // 
       // tabControl
@@ -89,19 +89,21 @@
       this.tabControl.Controls.Add(this.tabPage2);
       this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
       this.tabControl.Location = new System.Drawing.Point(0, 0);
+      this.tabControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabControl.Name = "tabControl";
       this.tabControl.SelectedIndex = 0;
-      this.tabControl.Size = new System.Drawing.Size(296, 224);
+      this.tabControl.Size = new System.Drawing.Size(444, 313);
       this.tabControl.TabIndex = 2;
       // 
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.groupBoxGeneralSettings);
       this.tabPage1.Controls.Add(this.groupBoxStatus);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Location = new System.Drawing.Point(4, 29);
+      this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(288, 198);
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.tabPage1.Size = new System.Drawing.Size(436, 280);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -112,14 +114,14 @@
       this.groupBoxGeneralSettings.Controls.Add(this.lblStartMinimized);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxApplicationEnabled);
       this.groupBoxGeneralSettings.Controls.Add(this.lblApplicationEnabled);
-      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxShowMessages);
-      this.groupBoxGeneralSettings.Controls.Add(this.lblShowMessages);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxStartWithSystem);
       this.groupBoxGeneralSettings.Controls.Add(this.lblStartWithSystem);
-      this.groupBoxGeneralSettings.Dock = System.Windows.Forms.DockStyle.Top;
-      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(3, 95);
+      this.groupBoxGeneralSettings.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(4, 147);
+      this.groupBoxGeneralSettings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(282, 100);
+      this.groupBoxGeneralSettings.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(428, 128);
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General settings";
@@ -127,76 +129,63 @@
       // checkBoxStartApplicationMinimized
       // 
       this.checkBoxStartApplicationMinimized.AutoSize = true;
-      this.checkBoxStartApplicationMinimized.Location = new System.Drawing.Point(260, 81);
+      this.checkBoxStartApplicationMinimized.Location = new System.Drawing.Point(390, 96);
+      this.checkBoxStartApplicationMinimized.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.checkBoxStartApplicationMinimized.Name = "checkBoxStartApplicationMinimized";
-      this.checkBoxStartApplicationMinimized.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxStartApplicationMinimized.TabIndex = 9;
+      this.checkBoxStartApplicationMinimized.Size = new System.Drawing.Size(22, 21);
+      this.checkBoxStartApplicationMinimized.TabIndex = 5;
       this.checkBoxStartApplicationMinimized.UseVisualStyleBackColor = true;
       this.checkBoxStartApplicationMinimized.CheckedChanged += new System.EventHandler(this.checkBoxStartApplicationMinimized_CheckedChanged);
       // 
       // lblStartMinimized
       // 
       this.lblStartMinimized.AutoSize = true;
-      this.lblStartMinimized.Location = new System.Drawing.Point(9, 81);
+      this.lblStartMinimized.Location = new System.Drawing.Point(14, 96);
+      this.lblStartMinimized.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblStartMinimized.Name = "lblStartMinimized";
-      this.lblStartMinimized.Size = new System.Drawing.Size(131, 13);
-      this.lblStartMinimized.TabIndex = 8;
-      this.lblStartMinimized.Text = "Start application minimized";
+      this.lblStartMinimized.Size = new System.Drawing.Size(118, 20);
+      this.lblStartMinimized.TabIndex = 4;
+      this.lblStartMinimized.Text = "Start minimized";
       // 
       // checkBoxApplicationEnabled
       // 
       this.checkBoxApplicationEnabled.AutoSize = true;
-      this.checkBoxApplicationEnabled.Location = new System.Drawing.Point(260, 60);
+      this.checkBoxApplicationEnabled.Location = new System.Drawing.Point(390, 63);
+      this.checkBoxApplicationEnabled.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.checkBoxApplicationEnabled.Name = "checkBoxApplicationEnabled";
-      this.checkBoxApplicationEnabled.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxApplicationEnabled.TabIndex = 7;
+      this.checkBoxApplicationEnabled.Size = new System.Drawing.Size(22, 21);
+      this.checkBoxApplicationEnabled.TabIndex = 3;
       this.checkBoxApplicationEnabled.UseVisualStyleBackColor = true;
       this.checkBoxApplicationEnabled.CheckedChanged += new System.EventHandler(this.checkBoxApplicationEnabled_CheckedChanged);
       // 
       // lblApplicationEnabled
       // 
       this.lblApplicationEnabled.AutoSize = true;
-      this.lblApplicationEnabled.Location = new System.Drawing.Point(9, 61);
+      this.lblApplicationEnabled.Location = new System.Drawing.Point(14, 65);
+      this.lblApplicationEnabled.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblApplicationEnabled.Name = "lblApplicationEnabled";
-      this.lblApplicationEnabled.Size = new System.Drawing.Size(100, 13);
-      this.lblApplicationEnabled.TabIndex = 4;
-      this.lblApplicationEnabled.Text = "Application enabled";
-      // 
-      // checkBoxShowMessages
-      // 
-      this.checkBoxShowMessages.AutoSize = true;
-      this.checkBoxShowMessages.Location = new System.Drawing.Point(260, 40);
-      this.checkBoxShowMessages.Name = "checkBoxShowMessages";
-      this.checkBoxShowMessages.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxShowMessages.TabIndex = 6;
-      this.checkBoxShowMessages.UseVisualStyleBackColor = true;
-      this.checkBoxShowMessages.CheckedChanged += new System.EventHandler(this.checkBoxShowMessages_CheckedChanged);
-      // 
-      // lblShowMessages
-      // 
-      this.lblShowMessages.AutoSize = true;
-      this.lblShowMessages.Location = new System.Drawing.Point(9, 41);
-      this.lblShowMessages.Name = "lblShowMessages";
-      this.lblShowMessages.Size = new System.Drawing.Size(84, 13);
-      this.lblShowMessages.TabIndex = 2;
-      this.lblShowMessages.Text = "Show messages";
+      this.lblApplicationEnabled.Size = new System.Drawing.Size(148, 20);
+      this.lblApplicationEnabled.TabIndex = 2;
+      this.lblApplicationEnabled.Text = "Restore connection";
       // 
       // checkBoxStartWithSystem
       // 
       this.checkBoxStartWithSystem.AutoSize = true;
-      this.checkBoxStartWithSystem.Location = new System.Drawing.Point(260, 19);
+      this.checkBoxStartWithSystem.Location = new System.Drawing.Point(390, 29);
+      this.checkBoxStartWithSystem.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.checkBoxStartWithSystem.Name = "checkBoxStartWithSystem";
-      this.checkBoxStartWithSystem.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxStartWithSystem.TabIndex = 5;
+      this.checkBoxStartWithSystem.Size = new System.Drawing.Size(22, 21);
+      this.checkBoxStartWithSystem.TabIndex = 1;
       this.checkBoxStartWithSystem.UseVisualStyleBackColor = true;
       this.checkBoxStartWithSystem.CheckedChanged += new System.EventHandler(this.checkBoxStartWithSystem_CheckedChanged);
       // 
       // lblStartWithSystem
       // 
       this.lblStartWithSystem.AutoSize = true;
-      this.lblStartWithSystem.Location = new System.Drawing.Point(9, 20);
+      this.lblStartWithSystem.Location = new System.Drawing.Point(14, 31);
+      this.lblStartWithSystem.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblStartWithSystem.Name = "lblStartWithSystem";
-      this.lblStartWithSystem.Size = new System.Drawing.Size(140, 13);
+      this.lblStartWithSystem.Size = new System.Drawing.Size(210, 20);
       this.lblStartWithSystem.TabIndex = 0;
       this.lblStartWithSystem.Text = "Start application with system";
       // 
@@ -207,38 +196,43 @@
       this.groupBoxStatus.Controls.Add(this.lblConnectsTo);
       this.groupBoxStatus.Controls.Add(this.lblConnectionStatus);
       this.groupBoxStatus.Dock = System.Windows.Forms.DockStyle.Top;
-      this.groupBoxStatus.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxStatus.Location = new System.Drawing.Point(4, 5);
+      this.groupBoxStatus.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBoxStatus.Name = "groupBoxStatus";
-      this.groupBoxStatus.Size = new System.Drawing.Size(282, 92);
-      this.groupBoxStatus.TabIndex = 2;
+      this.groupBoxStatus.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.groupBoxStatus.Size = new System.Drawing.Size(428, 142);
+      this.groupBoxStatus.TabIndex = 0;
       this.groupBoxStatus.TabStop = false;
       this.groupBoxStatus.Text = "Status";
       // 
       // lblAppEnabled
       // 
       this.lblAppEnabled.AutoSize = true;
-      this.lblAppEnabled.Location = new System.Drawing.Point(7, 20);
+      this.lblAppEnabled.Location = new System.Drawing.Point(10, 31);
+      this.lblAppEnabled.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblAppEnabled.Name = "lblAppEnabled";
-      this.lblAppEnabled.Size = new System.Drawing.Size(128, 13);
-      this.lblAppEnabled.TabIndex = 2;
+      this.lblAppEnabled.Size = new System.Drawing.Size(188, 20);
+      this.lblAppEnabled.TabIndex = 0;
       this.lblAppEnabled.Text = "Application enabled: True";
       // 
       // lblConnectionStatus
       // 
       this.lblConnectionStatus.AutoSize = true;
-      this.lblConnectionStatus.Location = new System.Drawing.Point(7, 67);
+      this.lblConnectionStatus.Location = new System.Drawing.Point(10, 103);
+      this.lblConnectionStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectionStatus.Name = "lblConnectionStatus";
-      this.lblConnectionStatus.Size = new System.Drawing.Size(164, 13);
-      this.lblConnectionStatus.TabIndex = 0;
+      this.lblConnectionStatus.Size = new System.Drawing.Size(244, 20);
+      this.lblConnectionStatus.TabIndex = 3;
       this.lblConnectionStatus.Text = "Connection status: Disconnected";
       // 
       // tabPage2
       // 
       this.tabPage2.Controls.Add(this.groupBoxVPNSettings);
-      this.tabPage2.Location = new System.Drawing.Point(4, 22);
+      this.tabPage2.Location = new System.Drawing.Point(4, 29);
+      this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(288, 198);
+      this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.tabPage2.Size = new System.Drawing.Size(436, 312);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Setup";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -253,18 +247,21 @@
       this.groupBoxVPNSettings.Controls.Add(this.comboBoxActiveVPNConnections);
       this.groupBoxVPNSettings.Controls.Add(this.lblSelectVPNConnection);
       this.groupBoxVPNSettings.Dock = System.Windows.Forms.DockStyle.Top;
-      this.groupBoxVPNSettings.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxVPNSettings.Location = new System.Drawing.Point(4, 5);
+      this.groupBoxVPNSettings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBoxVPNSettings.Name = "groupBoxVPNSettings";
-      this.groupBoxVPNSettings.Size = new System.Drawing.Size(282, 131);
+      this.groupBoxVPNSettings.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.groupBoxVPNSettings.Size = new System.Drawing.Size(428, 202);
       this.groupBoxVPNSettings.TabIndex = 0;
       this.groupBoxVPNSettings.TabStop = false;
       this.groupBoxVPNSettings.Text = "VPN Settings";
       // 
       // btnSaveSettings
       // 
-      this.btnSaveSettings.Location = new System.Drawing.Point(9, 103);
+      this.btnSaveSettings.Location = new System.Drawing.Point(14, 158);
+      this.btnSaveSettings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.btnSaveSettings.Name = "btnSaveSettings";
-      this.btnSaveSettings.Size = new System.Drawing.Size(75, 23);
+      this.btnSaveSettings.Size = new System.Drawing.Size(112, 35);
       this.btnSaveSettings.TabIndex = 4;
       this.btnSaveSettings.Text = "Apply";
       this.btnSaveSettings.UseVisualStyleBackColor = true;
@@ -273,83 +270,89 @@
       // lblPassword
       // 
       this.lblPassword.AutoSize = true;
-      this.lblPassword.Location = new System.Drawing.Point(145, 61);
+      this.lblPassword.Location = new System.Drawing.Point(218, 94);
+      this.lblPassword.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblPassword.Name = "lblPassword";
-      this.lblPassword.Size = new System.Drawing.Size(53, 13);
+      this.lblPassword.Size = new System.Drawing.Size(78, 20);
       this.lblPassword.TabIndex = 4;
       this.lblPassword.Text = "Password";
       // 
       // textBoxPassword
       // 
-      this.textBoxPassword.Location = new System.Drawing.Point(148, 77);
+      this.textBoxPassword.Location = new System.Drawing.Point(222, 118);
+      this.textBoxPassword.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.textBoxPassword.Name = "textBoxPassword";
       this.textBoxPassword.PasswordChar = '*';
-      this.textBoxPassword.Size = new System.Drawing.Size(128, 20);
+      this.textBoxPassword.Size = new System.Drawing.Size(190, 26);
       this.textBoxPassword.TabIndex = 3;
       // 
       // lblUsername
       // 
       this.lblUsername.AutoSize = true;
-      this.lblUsername.Location = new System.Drawing.Point(6, 61);
+      this.lblUsername.Location = new System.Drawing.Point(9, 94);
+      this.lblUsername.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblUsername.Name = "lblUsername";
-      this.lblUsername.Size = new System.Drawing.Size(55, 13);
+      this.lblUsername.Size = new System.Drawing.Size(83, 20);
       this.lblUsername.TabIndex = 2;
       this.lblUsername.Text = "Username";
       // 
       // textBoxUsername
       // 
-      this.textBoxUsername.Location = new System.Drawing.Point(10, 77);
+      this.textBoxUsername.Location = new System.Drawing.Point(15, 118);
+      this.textBoxUsername.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.textBoxUsername.Name = "textBoxUsername";
-      this.textBoxUsername.Size = new System.Drawing.Size(132, 20);
+      this.textBoxUsername.Size = new System.Drawing.Size(196, 26);
       this.textBoxUsername.TabIndex = 2;
       // 
       // comboBoxActiveVPNConnections
       // 
       this.comboBoxActiveVPNConnections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxActiveVPNConnections.FormattingEnabled = true;
-      this.comboBoxActiveVPNConnections.Location = new System.Drawing.Point(10, 37);
+      this.comboBoxActiveVPNConnections.Location = new System.Drawing.Point(15, 57);
+      this.comboBoxActiveVPNConnections.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.comboBoxActiveVPNConnections.Name = "comboBoxActiveVPNConnections";
-      this.comboBoxActiveVPNConnections.Size = new System.Drawing.Size(266, 21);
+      this.comboBoxActiveVPNConnections.Size = new System.Drawing.Size(397, 28);
       this.comboBoxActiveVPNConnections.TabIndex = 1;
       this.comboBoxActiveVPNConnections.DropDown += new System.EventHandler(this.comboBoxActiveVPNConnections_DropDown);
       // 
       // lblSelectVPNConnection
       // 
       this.lblSelectVPNConnection.AutoSize = true;
-      this.lblSelectVPNConnection.Location = new System.Drawing.Point(7, 20);
+      this.lblSelectVPNConnection.Location = new System.Drawing.Point(10, 31);
+      this.lblSelectVPNConnection.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblSelectVPNConnection.Name = "lblSelectVPNConnection";
-      this.lblSelectVPNConnection.Size = new System.Drawing.Size(85, 13);
+      this.lblSelectVPNConnection.Size = new System.Drawing.Size(123, 20);
       this.lblSelectVPNConnection.TabIndex = 0;
       this.lblSelectVPNConnection.Text = "VPN connection";
       // 
       // mNotifyIcon
       // 
-      this.mNotifyIcon.ContextMenu = this.contextMenu;
+      this.mNotifyIcon.ContextMenu = this.contextMenuStrip;
       this.mNotifyIcon.Visible = true;
       this.mNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mNotifyIcon_MouseDoubleClick);
       // 
-      // contextMenu
+      // contextMenuStrip
       // 
-      this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemExit});
-      this.contextMenu.Name = "contextMenuStrip";
+      this.contextMenuStrip.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.toolStripMenuItemExit});
       // 
-      // menuItemExit
+      // toolStripMenuItemExit
       // 
-      this.menuItemExit.DefaultItem = true;
-      this.menuItemExit.Name = "toolStripMenuItemExit";
-      this.menuItemExit.Text = "Exit";
-      this.menuItemExit.Click += new System.EventHandler(this.toolStripMenuItemExit_Click);
+      this.toolStripMenuItemExit.DefaultItem = true;
+      this.toolStripMenuItemExit.Index = 0;
+      this.toolStripMenuItemExit.Text = "Exit";
+      this.toolStripMenuItemExit.Click += new System.EventHandler(this.toolStripMenuItemExit_Click);
       // 
       // AutoVpnConnect
       // 
-      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(296, 224);
+      this.ClientSize = new System.Drawing.Size(444, 313);
       this.Controls.Add(this.tabControl);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-      this.MinimizeBox = false;
+      this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.MaximizeBox = false;
+      this.MinimizeBox = false;
       this.Name = "AutoVpnConnect";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "AutoVPNConnect";
@@ -385,8 +388,6 @@
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.TextBox textBoxUsername;
         private System.Windows.Forms.GroupBox groupBoxGeneralSettings;
-        private System.Windows.Forms.CheckBox checkBoxShowMessages;
-        private System.Windows.Forms.Label lblShowMessages;
         private System.Windows.Forms.CheckBox checkBoxStartWithSystem;
         private System.Windows.Forms.Label lblStartWithSystem;
         private System.Windows.Forms.CheckBox checkBoxApplicationEnabled;
@@ -398,7 +399,8 @@
         private System.Windows.Forms.NotifyIcon mNotifyIcon;
         private System.Windows.Forms.ContextMenu contextMenu;
         private System.Windows.Forms.MenuItem menuItemExit;
-
-    }
+    private System.Windows.Forms.ContextMenu contextMenuStrip;
+    private System.Windows.Forms.MenuItem toolStripMenuItemExit;
+  }
 }
 

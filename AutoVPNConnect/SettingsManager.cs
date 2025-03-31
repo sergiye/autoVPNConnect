@@ -12,7 +12,6 @@ namespace AutoVPNConnect {
     private string password = "";
 
     private bool startApplicationWithSystem = true;
-    private bool showMessages = true;
     private bool applicationEnabled = true;
     private bool startApplicationMinimized;
 
@@ -70,7 +69,6 @@ namespace AutoVPNConnect {
 
         var applicationStartWithSystem = key.GetValue("StartApplicationWithSystem").ToString();
         startApplicationWithSystem = applicationStartWithSystem == "True";
-        showMessages = key.GetValue("ShowMessages").ToString() == "True";
         applicationEnabled = key.GetValue("ApplicationEnabled").ToString() == "True";
         startApplicationMinimized = key.GetValue("StartApplicationMinimized").ToString() == "True";
 
@@ -99,7 +97,6 @@ namespace AutoVPNConnect {
         key.SetValue("Username", username, RegistryValueKind.String);
         key.SetValue("Password", encryptedPassword, RegistryValueKind.String);
         key.SetValue("StartApplicationWithSystem", startApplicationWithSystem, RegistryValueKind.String);
-        key.SetValue("ShowMessages", showMessages, RegistryValueKind.String);
         key.SetValue("ApplicationEnabled", applicationEnabled, RegistryValueKind.String);
         key.SetValue("StartApplicationMinimized", startApplicationMinimized, RegistryValueKind.String);
       }
@@ -191,15 +188,6 @@ namespace AutoVPNConnect {
 
     public bool GetApplicationStartWithSystem() {
       return startApplicationWithSystem;
-    }
-
-    public void SetShowMessages(bool enabled) {
-      showMessages = enabled;
-      WriteSettings();
-    }
-
-    public bool GetShowMessagesSetting() {
-      return showMessages;
     }
 
     public void SetApplicationEnabledSetting(bool enabled) {
