@@ -12,6 +12,8 @@ namespace AutoVPNConnect {
 
     public AutoVpnConnect() {
       InitializeComponent();
+      
+      Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       mSettingsManager = new SettingsManager();
       mConnectionManager = new ConnectionManager(ref mSettingsManager);
 
