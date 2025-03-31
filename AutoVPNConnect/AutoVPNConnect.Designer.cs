@@ -397,8 +397,6 @@
         private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
         private System.Windows.Forms.Label lblStartMinimized;
         private System.Windows.Forms.NotifyIcon mNotifyIcon;
-        private System.Windows.Forms.ContextMenu contextMenu;
-        private System.Windows.Forms.MenuItem menuItemExit;
     private System.Windows.Forms.ContextMenu contextMenuStrip;
     private System.Windows.Forms.MenuItem toolStripMenuItemExit;
   }
