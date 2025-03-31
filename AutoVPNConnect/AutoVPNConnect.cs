@@ -109,8 +109,6 @@ namespace AutoVPNConnect {
 
     void UpdateUITimer_Tick(object sender, EventArgs e) {
       lblConnectionName.Text = mSettingsManager?.GetConnectionName();
-      lblAppEnabled.Text = "Application enabled: " + mSettingsManager?.GetApplicationEnabledSetting().ToString();
-
       var isConnected = mConnectionManager?.VpNisConnected() ?? false;
       mNotifyIcon.Icon = isConnected ? Icon : redIcon;
       lblConnectionStatus.Text = isConnected ? "Connection status: Connected" : "Connection status: Disconnected";

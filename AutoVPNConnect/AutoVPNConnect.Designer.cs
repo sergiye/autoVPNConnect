@@ -41,7 +41,6 @@
       this.checkBoxStartWithSystem = new System.Windows.Forms.CheckBox();
       this.lblStartWithSystem = new System.Windows.Forms.Label();
       this.groupBoxStatus = new System.Windows.Forms.GroupBox();
-      this.lblAppEnabled = new System.Windows.Forms.Label();
       this.lblConnectionStatus = new System.Windows.Forms.Label();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.groupBoxVPNSettings = new System.Windows.Forms.GroupBox();
@@ -66,7 +65,7 @@
       // lblConnectionName
       // 
       this.lblConnectionName.AutoSize = true;
-      this.lblConnectionName.Location = new System.Drawing.Point(148, 65);
+      this.lblConnectionName.Location = new System.Drawing.Point(146, 24);
       this.lblConnectionName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectionName.Name = "lblConnectionName";
       this.lblConnectionName.Size = new System.Drawing.Size(134, 20);
@@ -76,7 +75,7 @@
       // lblConnectsTo
       // 
       this.lblConnectsTo.AutoSize = true;
-      this.lblConnectsTo.Location = new System.Drawing.Point(10, 65);
+      this.lblConnectsTo.Location = new System.Drawing.Point(8, 24);
       this.lblConnectsTo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectsTo.Name = "lblConnectsTo";
       this.lblConnectsTo.Size = new System.Drawing.Size(126, 20);
@@ -92,7 +91,7 @@
       this.tabControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabControl.Name = "tabControl";
       this.tabControl.SelectedIndex = 0;
-      this.tabControl.Size = new System.Drawing.Size(444, 313);
+      this.tabControl.Size = new System.Drawing.Size(444, 279);
       this.tabControl.TabIndex = 2;
       // 
       // tabPage1
@@ -103,7 +102,7 @@
       this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-      this.tabPage1.Size = new System.Drawing.Size(436, 280);
+      this.tabPage1.Size = new System.Drawing.Size(436, 246);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
       this.tabPage1.UseVisualStyleBackColor = true;
@@ -117,11 +116,11 @@
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxStartWithSystem);
       this.groupBoxGeneralSettings.Controls.Add(this.lblStartWithSystem);
       this.groupBoxGeneralSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(4, 147);
+      this.groupBoxGeneralSettings.Location = new System.Drawing.Point(4, 109);
       this.groupBoxGeneralSettings.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
       this.groupBoxGeneralSettings.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(428, 128);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(428, 132);
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General settings";
@@ -192,7 +191,6 @@
       // groupBoxStatus
       // 
       this.groupBoxStatus.Controls.Add(this.lblConnectionName);
-      this.groupBoxStatus.Controls.Add(this.lblAppEnabled);
       this.groupBoxStatus.Controls.Add(this.lblConnectsTo);
       this.groupBoxStatus.Controls.Add(this.lblConnectionStatus);
       this.groupBoxStatus.Dock = System.Windows.Forms.DockStyle.Top;
@@ -200,25 +198,15 @@
       this.groupBoxStatus.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.groupBoxStatus.Name = "groupBoxStatus";
       this.groupBoxStatus.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-      this.groupBoxStatus.Size = new System.Drawing.Size(428, 142);
+      this.groupBoxStatus.Size = new System.Drawing.Size(428, 104);
       this.groupBoxStatus.TabIndex = 0;
       this.groupBoxStatus.TabStop = false;
       this.groupBoxStatus.Text = "Status";
       // 
-      // lblAppEnabled
-      // 
-      this.lblAppEnabled.AutoSize = true;
-      this.lblAppEnabled.Location = new System.Drawing.Point(10, 31);
-      this.lblAppEnabled.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-      this.lblAppEnabled.Name = "lblAppEnabled";
-      this.lblAppEnabled.Size = new System.Drawing.Size(188, 20);
-      this.lblAppEnabled.TabIndex = 0;
-      this.lblAppEnabled.Text = "Application enabled: True";
-      // 
       // lblConnectionStatus
       // 
       this.lblConnectionStatus.AutoSize = true;
-      this.lblConnectionStatus.Location = new System.Drawing.Point(10, 103);
+      this.lblConnectionStatus.Location = new System.Drawing.Point(8, 62);
       this.lblConnectionStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectionStatus.Name = "lblConnectionStatus";
       this.lblConnectionStatus.Size = new System.Drawing.Size(244, 20);
@@ -232,7 +220,7 @@
       this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-      this.tabPage2.Size = new System.Drawing.Size(436, 312);
+      this.tabPage2.Size = new System.Drawing.Size(436, 246);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Setup";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -347,7 +335,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(444, 313);
+      this.ClientSize = new System.Drawing.Size(444, 279);
       this.Controls.Add(this.tabControl);
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
       this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -392,7 +380,6 @@
         private System.Windows.Forms.CheckBox checkBoxApplicationEnabled;
         private System.Windows.Forms.Label lblApplicationEnabled;
         private System.Windows.Forms.Button btnSaveSettings;
-        private System.Windows.Forms.Label lblAppEnabled;
         private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
         private System.Windows.Forms.Label lblStartMinimized;
         private System.Windows.Forms.NotifyIcon mNotifyIcon;
