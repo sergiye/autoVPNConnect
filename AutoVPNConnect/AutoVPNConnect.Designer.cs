@@ -51,9 +51,6 @@
       this.textBoxUsername = new System.Windows.Forms.TextBox();
       this.comboBoxActiveVPNConnections = new System.Windows.Forms.ComboBox();
       this.lblSelectVPNConnection = new System.Windows.Forms.Label();
-      this.mNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-      this.contextMenuStrip = new System.Windows.Forms.ContextMenu();
-      this.toolStripMenuItemExit = new System.Windows.Forms.MenuItem();
       this.tabControl.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBoxGeneralSettings.SuspendLayout();
@@ -313,24 +310,6 @@
       this.lblSelectVPNConnection.TabIndex = 0;
       this.lblSelectVPNConnection.Text = "VPN connection";
       // 
-      // mNotifyIcon
-      // 
-      this.mNotifyIcon.ContextMenu = this.contextMenuStrip;
-      this.mNotifyIcon.Visible = true;
-      this.mNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mNotifyIcon_MouseDoubleClick);
-      // 
-      // contextMenuStrip
-      // 
-      this.contextMenuStrip.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.toolStripMenuItemExit});
-      // 
-      // toolStripMenuItemExit
-      // 
-      this.toolStripMenuItemExit.DefaultItem = true;
-      this.toolStripMenuItemExit.Index = 0;
-      this.toolStripMenuItemExit.Text = "Exit";
-      this.toolStripMenuItemExit.Click += new System.EventHandler(this.toolStripMenuItemExit_Click);
-      // 
       // AutoVpnConnect
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -382,9 +361,6 @@
         private System.Windows.Forms.Button btnSaveSettings;
         private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
         private System.Windows.Forms.Label lblStartMinimized;
-        private System.Windows.Forms.NotifyIcon mNotifyIcon;
-    private System.Windows.Forms.ContextMenu contextMenuStrip;
-    private System.Windows.Forms.MenuItem toolStripMenuItemExit;
   }
 }
 

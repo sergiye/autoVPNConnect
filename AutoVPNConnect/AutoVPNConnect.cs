@@ -11,9 +11,9 @@ namespace AutoVPNConnect {
 
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
+    private readonly NotifyIcon mNotifyIcon;
     private readonly Timer mUpdateUiTimer = new Timer();
     private readonly Icon redIcon;
-    private bool canClose = false;
     private bool showApp = false;
 
     public AutoVpnConnect() {
@@ -33,8 +33,19 @@ namespace AutoVPNConnect {
         MessageBox.Show("AutoVPNConnect is already running.\nIt is recommended to close this instance.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
+      var menuItemShowHide = new MenuItem("Show/Hide", menuItemShowHide_Click);
+      menuItemShowHide.DefaultItem = true;
+      this.mNotifyIcon = new NotifyIcon(this.components);
+      mNotifyIcon.ContextMenu = new ContextMenu(new MenuItem[] {
+            menuItemShowHide,
+            new MenuItem("-"),
+            new MenuItem("Exit", toolStripMenuItemExit_Click)});
+      mNotifyIcon.Icon = Icon;
+      mNotifyIcon.Visible = true;
+      this.mNotifyIcon.MouseDoubleClick += menuItemShowHide_Click;
+
       //Init timer
-      mUpdateUiTimer.Interval = 1000;
+      mUpdateUiTimer.Interval = 2000;
       mUpdateUiTimer.Enabled = true;
       mUpdateUiTimer.Tick += UpdateUITimer_Tick;
 
@@ -108,14 +119,25 @@ namespace AutoVPNConnect {
     }
 
     void UpdateUITimer_Tick(object sender, EventArgs e) {
-      lblConnectionName.Text = mSettingsManager?.GetConnectionName();
+
+      var connectionName = mSettingsManager?.GetConnectionName();
       var isConnected = mConnectionManager?.VpNisConnected() ?? false;
-      mNotifyIcon.Icon = isConnected ? Icon : redIcon;
-      lblConnectionStatus.Text = isConnected ? "Connection status: Connected" : "Connection status: Disconnected";
+      var isConnectedText = isConnected ? "Connected" : "Disconnected";
+      lblConnectionName.Text = connectionName;
+      lblConnectionStatus.Text = "Connection status: " + isConnectedText;
       lblConnectionStatus.ForeColor = isConnected ? Color.DarkGreen : Color.Red;
+
+      mNotifyIcon.Icon = isConnected ? Icon : redIcon;
+      mNotifyIcon.Text = "AutoVPNConnect";
+      if (!string.IsNullOrEmpty(connectionName)) {
+        mNotifyIcon.Text += $"\n{connectionName} - {isConnectedText}";
+      }
+      //mNotifyIcon.BalloonTipTitle = "AutoVPNConnect";
+      //mNotifyIcon.BalloonTipText = "AutoVPNConnect runs in background";
+      //mNotifyIcon.ShowBalloonTip(1000);
     }
 
-    private void mNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
+    private void menuItemShowHide_Click(object sender, EventArgs e) {
       showApp = !showApp;
       Visible = !Visible;
       if (Visible)
@@ -123,14 +145,14 @@ namespace AutoVPNConnect {
     }
 
     private void toolStripMenuItemExit_Click(object sender, EventArgs e) {
-      canClose = true;
-      Close();
+      mNotifyIcon.Visible = false;
+      Environment.Exit(0);
     }
 
     private void AutoVPNConnect_FormClosing(object sender, FormClosingEventArgs e) {
       showApp = false;
       Visible = false;
-      e.Cancel = !canClose;
+      e.Cancel = true;
     }
   }
 }
