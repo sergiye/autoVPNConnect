@@ -12,6 +12,7 @@ namespace AutoVPNConnect {
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
     private readonly NotifyIcon mNotifyIcon;
+    private readonly MenuItem menuItemReconnect;
     private readonly Timer mUpdateUiTimer = new Timer();
     private readonly Icon redIcon;
     private bool showApp = false;
@@ -33,22 +34,6 @@ namespace AutoVPNConnect {
         MessageBox.Show("AutoVPNConnect is already running.\nIt is recommended to close this instance.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
 
-      var menuItemShowHide = new MenuItem("Show/Hide", menuItemShowHide_Click);
-      menuItemShowHide.DefaultItem = true;
-      this.mNotifyIcon = new NotifyIcon(this.components);
-      mNotifyIcon.ContextMenu = new ContextMenu(new MenuItem[] {
-            menuItemShowHide,
-            new MenuItem("-"),
-            new MenuItem("Exit", toolStripMenuItemExit_Click)});
-      mNotifyIcon.Icon = Icon;
-      mNotifyIcon.Visible = true;
-      this.mNotifyIcon.MouseDoubleClick += menuItemShowHide_Click;
-
-      //Init timer
-      mUpdateUiTimer.Interval = 2000;
-      mUpdateUiTimer.Enabled = true;
-      mUpdateUiTimer.Tick += UpdateUITimer_Tick;
-
       //Go to Settings tab when no settings found
       if (SettingsManager.ValidSettingsFound() == false) {
         tabControl.SelectedTab = tabPage2;
@@ -59,6 +44,29 @@ namespace AutoVPNConnect {
       checkBoxApplicationEnabled.Checked = mSettingsManager.GetApplicationEnabledSetting();
       checkBoxStartApplicationMinimized.Checked = mSettingsManager.GetStartApplicationMinimized();
       showApp = !checkBoxStartApplicationMinimized.Checked;
+
+      menuItemReconnect = new MenuItem("Auto connect", (s, e) => {
+        checkBoxApplicationEnabled.Checked = !checkBoxApplicationEnabled.Checked;
+      }) {
+        Checked = checkBoxApplicationEnabled.Checked,
+      };
+      mNotifyIcon = new NotifyIcon(components) {
+        ContextMenu = new ContextMenu(new MenuItem[] {
+            new MenuItem("Show/Hide", menuItemShowHide_Click) {
+              DefaultItem = true
+            },
+            menuItemReconnect,
+            new MenuItem("-"),
+            new MenuItem("Exit", toolStripMenuItemExit_Click)}),
+        Icon = Icon,
+        Visible = true
+      };
+      mNotifyIcon.MouseDoubleClick += menuItemShowHide_Click;
+
+      //Init timer
+      mUpdateUiTimer.Interval = 2000;
+      mUpdateUiTimer.Enabled = true;
+      mUpdateUiTimer.Tick += UpdateUITimer_Tick;
     }
 
     protected override void SetVisibleCore(bool value) {
@@ -112,6 +120,7 @@ namespace AutoVPNConnect {
 
     private void checkBoxApplicationEnabled_CheckedChanged(object sender, EventArgs e) {
       mSettingsManager.SetApplicationEnabledSetting(checkBoxApplicationEnabled.Checked);
+      menuItemReconnect.Checked = checkBoxApplicationEnabled.Checked;
     }
 
     private void checkBoxStartApplicationMinimized_CheckedChanged(object sender, EventArgs e) {
