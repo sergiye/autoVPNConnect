@@ -13,6 +13,7 @@ namespace AutoVPNConnect {
     private readonly ConnectionManager mConnectionManager;
     private readonly NotifyIcon mNotifyIcon;
     private readonly MenuItem menuItemReconnect;
+    private readonly MenuItem menuItemConnect;
     private readonly Timer mUpdateUiTimer = new Timer();
     private readonly Icon redIcon;
     private bool showApp = false;
@@ -40,28 +41,35 @@ namespace AutoVPNConnect {
         lblConnectionStatus.Text = "Connection status: Disconnected";
       }
 
-      checkBoxStartWithSystem.Checked = mSettingsManager.GetApplicationStartWithSystem();
-      checkBoxApplicationEnabled.Checked = mSettingsManager.GetApplicationEnabledSetting();
-      checkBoxStartApplicationMinimized.Checked = mSettingsManager.GetStartApplicationMinimized();
-      showApp = !checkBoxStartApplicationMinimized.Checked;
-
       menuItemReconnect = new MenuItem("Auto connect", (s, e) => {
         checkBoxApplicationEnabled.Checked = !checkBoxApplicationEnabled.Checked;
       }) {
-        Checked = checkBoxApplicationEnabled.Checked,
+        Checked = mSettingsManager.GetApplicationEnabledSetting(),
       };
+
+      menuItemConnect = new MenuItem("Connect", async (s, e) => {
+        menuItemConnect.Enabled = false;
+        await mConnectionManager.ToggleConnection();
+        menuItemConnect.Enabled = !mConnectionManager.IsBusy;
+      });
       mNotifyIcon = new NotifyIcon(components) {
         ContextMenu = new ContextMenu(new MenuItem[] {
             new MenuItem("Show/Hide", menuItemShowHide_Click) {
               DefaultItem = true
             },
             menuItemReconnect,
+            menuItemConnect,
             new MenuItem("-"),
             new MenuItem("Exit", toolStripMenuItemExit_Click)}),
         Icon = Icon,
         Visible = true
       };
       mNotifyIcon.MouseDoubleClick += menuItemShowHide_Click;
+
+      checkBoxStartWithSystem.Checked = mSettingsManager.GetApplicationStartWithSystem();
+      checkBoxApplicationEnabled.Checked = mSettingsManager.GetApplicationEnabledSetting();
+      checkBoxStartApplicationMinimized.Checked = mSettingsManager.GetStartApplicationMinimized();
+      showApp = !checkBoxStartApplicationMinimized.Checked;
 
       //Init timer
       mUpdateUiTimer.Interval = 2000;
@@ -132,6 +140,9 @@ namespace AutoVPNConnect {
       var connectionName = mSettingsManager?.GetConnectionName();
       var isConnected = mConnectionManager?.VpNisConnected() ?? false;
       var isConnectedText = isConnected ? "Connected" : "Disconnected";
+      menuItemConnect.Text = isConnected ? "Disconnect" : "Connect";
+      menuItemConnect.Enabled = !string.IsNullOrEmpty(connectionName) && !mConnectionManager.IsBusy;
+
       lblConnectionName.Text = connectionName;
       lblConnectionStatus.Text = "Connection status: " + isConnectedText;
       lblConnectionStatus.ForeColor = isConnected ? Color.DarkGreen : Color.Red;

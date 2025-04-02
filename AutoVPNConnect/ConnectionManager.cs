@@ -14,10 +14,12 @@ namespace AutoVPNConnect {
       mSettingsManager = rSettingsManager;
 
       //Init timer
-      vpnConnectionCheckTimer.Interval = 15000;
+      vpnConnectionCheckTimer.Interval = 10000;
       vpnConnectionCheckTimer.Enabled = true;
       vpnConnectionCheckTimer.Tick += VPNConnectionCheckTimer_Tick;
     }
+
+    public bool IsBusy { get; private set; }
 
     public static List<NetworkInterface> GetActiveVpnConnections() {
       var vpnConnections = new List<NetworkInterface>();
@@ -51,8 +53,35 @@ namespace AutoVPNConnect {
       return false;
     }
 
-    private void ConnectToVpn() {
+    public Task ToggleConnection() {
+      return Task.Run(() => {
+        if (VpNisConnected()) {
+          DisconnectFromVpn();
+        }
+        else {
+          ConnectToVpn();
+        }
+      });
+    }
 
+    private void DisconnectFromVpn() {
+      if (IsBusy) return;
+      IsBusy = true;
+      var vpnName = mSettingsManager.GetConnectionName();
+      var process = Process.Start(new ProcessStartInfo("rasdial.exe", $" \u0022{vpnName}\u0022 /disconnect") {
+        RedirectStandardOutput = true,
+        UseShellExecute = false,
+        CreateNoWindow = true,
+        WindowStyle = ProcessWindowStyle.Hidden
+      });
+      if (!process.WaitForExit(60000))
+        process.Kill();
+      IsBusy = false;
+    }
+
+    private void ConnectToVpn() {
+      if (IsBusy) return;
+      IsBusy = true;
       var vpnName = mSettingsManager.GetConnectionName();
       var userName = mSettingsManager.GetUserName();
       var password = mSettingsManager.GetPassword();
@@ -78,11 +107,9 @@ namespace AutoVPNConnect {
       procStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
       //Start the process
       var process = Process.Start(procStartInfo);
-      Task.Factory.StartNew(async () => {
-        await Task.Delay(60000).ConfigureAwait(false);
-        if (!process.HasExited)
-          process.Kill();
-      });
+      if (!process.WaitForExit(60000))
+        process.Kill();
+      IsBusy = false;
     }
 
     void VPNConnectionCheckTimer_Tick(object sender, EventArgs e) {
