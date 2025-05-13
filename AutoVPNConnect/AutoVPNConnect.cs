@@ -79,6 +79,8 @@ namespace AutoVPNConnect {
       mUpdateUiTimer.Interval = 1000;
       mUpdateUiTimer.Enabled = true;
       mUpdateUiTimer.Tick += UpdateUITimer_Tick;
+
+      UpdateUITimer_Tick(null, EventArgs.Empty);
     }
 
     protected override void SetVisibleCore(bool value) {
@@ -88,21 +90,17 @@ namespace AutoVPNConnect {
     private void comboBoxActiveVPNConnections_DropDown(object sender, EventArgs e) {
       comboBoxActiveVPNConnections.Items.Clear();
       var vpnConnections = ConnectionManager.GetActiveVpnConnections();
-
-      if (vpnConnections.Count == 0) {
+      foreach (var @interface in vpnConnections) {
+        comboBoxActiveVPNConnections.Items.Add(@interface.Name);
+      }
+      if (comboBoxActiveVPNConnections.Items.Count == 0) {
         MessageBox.Show("Connect to a VPN first", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         try {
-          var startInfo = new ProcessStartInfo("NCPA.cpl");
-          startInfo.UseShellExecute = true;
-          Process.Start(startInfo);
+          Process.Start(new ProcessStartInfo("NCPA.cpl") { UseShellExecute = true });
         }
         catch {
           //ignore
         }
-      }
-
-      foreach (var @interface in vpnConnections) {
-        comboBoxActiveVPNConnections.Items.Add(@interface.Name);
       }
     }
 
@@ -143,14 +141,14 @@ namespace AutoVPNConnect {
 
       var connectionName = mSettingsManager?.GetConnectionName();
       var isConnecting = mConnectionManager?.IsBusy ?? false;
-      var isConnected = mConnectionManager?.VpNisConnected() ?? false;
+      var isConnected = mConnectionManager?.VpnIsConnected() ?? false;
       var isConnectedText = isConnecting ? "Busy" : isConnected ? "Connected" : "Disconnected";
       menuItemConnect.Text = isConnected ? "Disconnect" : "Connect";
       menuItemConnect.Enabled = !string.IsNullOrEmpty(connectionName) && !mConnectionManager.IsBusy;
 
       lblConnectionName.Text = connectionName;
       lblConnectionStatus.Text = "Connection status: " + isConnectedText;
-      lblConnectionStatus.ForeColor = isConnected ? Color.DarkGreen : Color.Red;
+      lblConnectionStatus.ForeColor = isConnecting ? Color.DarkGoldenrod : isConnected ? Color.DarkGreen : Color.Red;
 
       mNotifyIcon.Icon = isConnecting ? yellowIcon : isConnected ? Icon : redIcon;
       mNotifyIcon.Text = "AutoVPNConnect";

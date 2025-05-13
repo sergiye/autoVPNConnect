@@ -1,33 +1,28 @@
-﻿namespace AutoVPNConnect
-{
-    partial class AutoVpnConnect
-    {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+﻿namespace AutoVPNConnect {
+  partial class AutoVpnConnect {
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    protected override void Dispose(bool disposing) {
+      if (disposing && (components != null)) {
+        components.Dispose();
+      }
+      base.Dispose(disposing);
+    }
 
-        #region Windows Form Designer generated code
+    #region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent() {
       this.components = new System.ComponentModel.Container();
       this.lblConnectionName = new System.Windows.Forms.Label();
       this.lblConnectsTo = new System.Windows.Forms.Label();
@@ -62,10 +57,11 @@
       // lblConnectionName
       // 
       this.lblConnectionName.AutoSize = true;
-      this.lblConnectionName.Location = new System.Drawing.Point(146, 24);
+      this.lblConnectionName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.lblConnectionName.Location = new System.Drawing.Point(164, 24);
       this.lblConnectionName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectionName.Name = "lblConnectionName";
-      this.lblConnectionName.Size = new System.Drawing.Size(134, 20);
+      this.lblConnectionName.Size = new System.Drawing.Size(151, 20);
       this.lblConnectionName.TabIndex = 2;
       this.lblConnectionName.Text = "No settings found";
       // 
@@ -203,10 +199,11 @@
       // lblConnectionStatus
       // 
       this.lblConnectionStatus.AutoSize = true;
+      this.lblConnectionStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.lblConnectionStatus.Location = new System.Drawing.Point(8, 62);
       this.lblConnectionStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
       this.lblConnectionStatus.Name = "lblConnectionStatus";
-      this.lblConnectionStatus.Size = new System.Drawing.Size(244, 20);
+      this.lblConnectionStatus.Size = new System.Drawing.Size(275, 20);
       this.lblConnectionStatus.TabIndex = 3;
       this.lblConnectionStatus.Text = "Connection status: Disconnected";
       // 
@@ -322,7 +319,7 @@
       this.MinimizeBox = false;
       this.Name = "AutoVpnConnect";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-      this.Text = "AutoVPNConnect";
+      this.Text = "Auto VPN Connect";
       this.TransparencyKey = System.Drawing.SystemColors.ActiveBorder;
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AutoVPNConnect_FormClosing);
       this.tabControl.ResumeLayout(false);
@@ -336,31 +333,31 @@
       this.groupBoxVPNSettings.PerformLayout();
       this.ResumeLayout(false);
 
-        }
+    }
 
-        #endregion
-        private System.Windows.Forms.TabControl tabControl;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Label lblConnectionName;
-        private System.Windows.Forms.Label lblConnectsTo;
-        private System.Windows.Forms.GroupBox groupBoxStatus;
-        private System.Windows.Forms.Label lblConnectionStatus;
-        private System.Windows.Forms.GroupBox groupBoxVPNSettings;
-        private System.Windows.Forms.ComboBox comboBoxActiveVPNConnections;
-        private System.Windows.Forms.Label lblSelectVPNConnection;
-        private System.Windows.Forms.Label lblPassword;
-        private System.Windows.Forms.TextBox textBoxPassword;
-        private System.Windows.Forms.Label lblUsername;
-        private System.Windows.Forms.TextBox textBoxUsername;
-        private System.Windows.Forms.GroupBox groupBoxGeneralSettings;
-        private System.Windows.Forms.CheckBox checkBoxStartWithSystem;
-        private System.Windows.Forms.Label lblStartWithSystem;
-        private System.Windows.Forms.CheckBox checkBoxApplicationEnabled;
-        private System.Windows.Forms.Label lblApplicationEnabled;
-        private System.Windows.Forms.Button btnSaveSettings;
-        private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
-        private System.Windows.Forms.Label lblStartMinimized;
+    #endregion
+    private System.Windows.Forms.TabControl tabControl;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.TabPage tabPage2;
+    private System.Windows.Forms.Label lblConnectionName;
+    private System.Windows.Forms.Label lblConnectsTo;
+    private System.Windows.Forms.GroupBox groupBoxStatus;
+    private System.Windows.Forms.Label lblConnectionStatus;
+    private System.Windows.Forms.GroupBox groupBoxVPNSettings;
+    private System.Windows.Forms.ComboBox comboBoxActiveVPNConnections;
+    private System.Windows.Forms.Label lblSelectVPNConnection;
+    private System.Windows.Forms.Label lblPassword;
+    private System.Windows.Forms.TextBox textBoxPassword;
+    private System.Windows.Forms.Label lblUsername;
+    private System.Windows.Forms.TextBox textBoxUsername;
+    private System.Windows.Forms.GroupBox groupBoxGeneralSettings;
+    private System.Windows.Forms.CheckBox checkBoxStartWithSystem;
+    private System.Windows.Forms.Label lblStartWithSystem;
+    private System.Windows.Forms.CheckBox checkBoxApplicationEnabled;
+    private System.Windows.Forms.Label lblApplicationEnabled;
+    private System.Windows.Forms.Button btnSaveSettings;
+    private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
+    private System.Windows.Forms.Label lblStartMinimized;
   }
 }
 
