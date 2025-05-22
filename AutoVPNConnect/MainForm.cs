@@ -3,11 +3,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
 
-  public partial class AutoVpnConnect : Form {
+  public partial class MainForm : Form {
 
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
@@ -19,7 +20,7 @@ namespace AutoVPNConnect {
     private readonly Icon yellowIcon;
     private bool showApp = false;
 
-    public AutoVpnConnect() {
+    public MainForm() {
       InitializeComponent();
       
       Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
@@ -51,11 +52,8 @@ namespace AutoVPNConnect {
         Checked = mSettingsManager.GetApplicationEnabledSetting(),
       };
 
-      menuItemConnect = new MenuItem("Connect", async (s, e) => {
-        menuItemConnect.Enabled = false;
-        await mConnectionManager.ToggleConnection();
-        menuItemConnect.Enabled = !mConnectionManager.IsBusy;
-      });
+      btnToggle.Click += btnToggle_Click;
+      menuItemConnect = new MenuItem("Connect", btnToggle_Click);
       mNotifyIcon = new NotifyIcon(components) {
         ContextMenu = new ContextMenu(new MenuItem[] {
             new MenuItem("Show/Hide", menuItemShowHide_Click) {
@@ -81,6 +79,11 @@ namespace AutoVPNConnect {
       mUpdateUiTimer.Tick += UpdateUITimer_Tick;
 
       UpdateUITimer_Tick(null, EventArgs.Empty);
+    }
+
+    private async void btnToggle_Click(object sender, EventArgs e) {
+      btnToggle.Enabled = menuItemConnect.Enabled = false;
+      await mConnectionManager.ToggleConnection();
     }
 
     protected override void SetVisibleCore(bool value) {
@@ -143,8 +146,8 @@ namespace AutoVPNConnect {
       var isConnecting = mConnectionManager?.IsBusy ?? false;
       var isConnected = mConnectionManager?.VpnIsConnected() ?? false;
       var isConnectedText = isConnecting ? "Busy" : isConnected ? "Connected" : "Disconnected";
-      menuItemConnect.Text = isConnected ? "Disconnect" : "Connect";
-      menuItemConnect.Enabled = !string.IsNullOrEmpty(connectionName) && !mConnectionManager.IsBusy;
+      btnToggle.Text = menuItemConnect.Text = isConnected ? "Disconnect" : "Connect";
+      btnToggle.Enabled = menuItemConnect.Enabled = !string.IsNullOrEmpty(connectionName) && !mConnectionManager.IsBusy;
 
       lblConnectionName.Text = connectionName;
       lblConnectionStatus.Text = "Connection status: " + isConnectedText;

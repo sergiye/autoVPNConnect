@@ -1,5 +1,5 @@
 ﻿namespace AutoVPNConnect {
-  partial class AutoVpnConnect {
+  partial class MainForm {
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -36,6 +36,7 @@
       this.checkBoxStartWithSystem = new System.Windows.Forms.CheckBox();
       this.lblStartWithSystem = new System.Windows.Forms.Label();
       this.groupBoxStatus = new System.Windows.Forms.GroupBox();
+      this.btnToggle = new System.Windows.Forms.Button();
       this.lblConnectionStatus = new System.Windows.Forms.Label();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.groupBoxVPNSettings = new System.Windows.Forms.GroupBox();
@@ -183,6 +184,7 @@
       // 
       // groupBoxStatus
       // 
+      this.groupBoxStatus.Controls.Add(this.btnToggle);
       this.groupBoxStatus.Controls.Add(this.lblConnectionName);
       this.groupBoxStatus.Controls.Add(this.lblConnectsTo);
       this.groupBoxStatus.Controls.Add(this.lblConnectionStatus);
@@ -195,6 +197,15 @@
       this.groupBoxStatus.TabIndex = 0;
       this.groupBoxStatus.TabStop = false;
       this.groupBoxStatus.Text = "Status";
+      // 
+      // btnToggle
+      // 
+      this.btnToggle.Location = new System.Drawing.Point(316, 52);
+      this.btnToggle.Name = "btnToggle";
+      this.btnToggle.Size = new System.Drawing.Size(105, 41);
+      this.btnToggle.TabIndex = 4;
+      this.btnToggle.Text = "Toggle";
+      this.btnToggle.UseVisualStyleBackColor = true;
       // 
       // lblConnectionStatus
       // 
@@ -307,7 +318,7 @@
       this.lblSelectVPNConnection.TabIndex = 0;
       this.lblSelectVPNConnection.Text = "VPN connection";
       // 
-      // AutoVpnConnect
+      // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -317,7 +328,7 @@
       this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
       this.MaximizeBox = false;
       this.MinimizeBox = false;
-      this.Name = "AutoVpnConnect";
+      this.Name = "MainForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Auto VPN Connect";
       this.TransparencyKey = System.Drawing.SystemColors.ActiveBorder;
@@ -358,6 +369,7 @@
     private System.Windows.Forms.Button btnSaveSettings;
     private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
     private System.Windows.Forms.Label lblStartMinimized;
+    private System.Windows.Forms.Button btnToggle;
   }
 }
 
