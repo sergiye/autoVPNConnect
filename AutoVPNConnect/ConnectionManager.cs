@@ -62,29 +62,32 @@ namespace AutoVPNConnect {
       mSettingsManager = rSettingsManager;
 
       //Init timer
-      vpnConnectionCheckTimer.Interval = 5000;
+      vpnConnectionCheckTimer.Interval = 10000;
       vpnConnectionCheckTimer.Enabled = true;
       vpnConnectionCheckTimer.Tick += VPNConnectionCheckTimer_Tick;
     }
 
     public bool IsBusy { get; private set; }
 
-    public static IEnumerable<NetworkInterface> GetActiveVpnConnections() {
+    public static IEnumerable<NetworkInterface> GetActiveVpnConnections(string connectionName = null) {
       if (!NetworkInterface.GetIsNetworkAvailable())
         yield break;
 
       var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-      foreach (var @interface in interfaces) {
-        if (@interface.NetworkInterfaceType == NetworkInterfaceType.Ppp &&
-            @interface.NetworkInterfaceType != NetworkInterfaceType.Loopback) {
-          yield return @interface;
+      foreach (var ni in interfaces) {
+        if (ni.NetworkInterfaceType == NetworkInterfaceType.Ppp &&
+            ni.NetworkInterfaceType != NetworkInterfaceType.Loopback && 
+            ni.OperationalStatus == OperationalStatus.Up) {
+          yield return ni;
+          if (!string.IsNullOrEmpty(connectionName) && ni.Name == connectionName)
+            yield break;
         }
       }
     }
 
     public bool VpnIsConnected() {
       var vpnConnectionName = mSettingsManager.GetConnectionName();
-      return GetActiveVpnConnections().Any(i => i.Name == vpnConnectionName && i.OperationalStatus == OperationalStatus.Up);
+      return GetActiveVpnConnections(vpnConnectionName).Any();
       //todo: hRasConn = IntPtr.Zero;
     }
 

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
@@ -74,10 +73,8 @@ namespace AutoVPNConnect {
       showApp = !checkBoxStartApplicationMinimized.Checked;
 
       //Init timer
-      mUpdateUiTimer.Interval = 1000;
-      mUpdateUiTimer.Enabled = true;
+      mUpdateUiTimer.Interval = 1500;
       mUpdateUiTimer.Tick += UpdateUITimer_Tick;
-
       UpdateUITimer_Tick(null, EventArgs.Empty);
     }
 
@@ -142,6 +139,7 @@ namespace AutoVPNConnect {
 
     void UpdateUITimer_Tick(object sender, EventArgs e) {
 
+      mUpdateUiTimer.Enabled = false;
       var connectionName = mSettingsManager?.GetConnectionName();
       var isConnecting = mConnectionManager?.IsBusy ?? false;
       var isConnected = mConnectionManager?.VpnIsConnected() ?? false;
@@ -161,6 +159,8 @@ namespace AutoVPNConnect {
       //mNotifyIcon.BalloonTipTitle = "AutoVPNConnect";
       //mNotifyIcon.BalloonTipText = "AutoVPNConnect runs in background";
       //mNotifyIcon.ShowBalloonTip(1000);
+      
+      mUpdateUiTimer.Enabled = true;
     }
 
     private void menuItemShowHide_Click(object sender, EventArgs e) {
