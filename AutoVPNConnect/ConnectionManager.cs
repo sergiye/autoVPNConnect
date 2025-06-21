@@ -6,7 +6,6 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace AutoVPNConnect {
   class ConnectionManager {
@@ -19,6 +18,7 @@ namespace AutoVPNConnect {
     private const int RAS_MaxCallbackNumber = RAS_MaxPhoneNumber;
 
     private IntPtr hRasConn = IntPtr.Zero;
+    private bool isBusy;
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     struct RASDIALPARAMS {
@@ -56,24 +56,28 @@ namespace AutoVPNConnect {
     private static extern uint RasGetEntryDialParams(string lpszPhonebook, ref RASDIALPARAMS lpRasDialParams, ref bool lpfPassword);
 
     readonly SettingsManager mSettingsManager;
-    private readonly Timer vpnConnectionCheckTimer = new Timer();
 
     public ConnectionManager(ref SettingsManager rSettingsManager) {
       mSettingsManager = rSettingsManager;
-
-      //Init timer
-      vpnConnectionCheckTimer.Interval = 60000;
-      vpnConnectionCheckTimer.Enabled = true;
-      vpnConnectionCheckTimer.Tick += VPNConnectionCheckTimer_Tick;
-
       NetworkChange.NetworkAddressChanged += NetworkAddressChanged;
     }
 
+    public event Action OnStatusChanged;
+
     private void NetworkAddressChanged(object sender, EventArgs e) {
-      VPNConnectionCheckTimer_Tick(sender, e);
+      if (mSettingsManager.GetApplicationEnabledSetting()) {
+        RestoreConnection();
+      }
+      OnStatusChanged?.Invoke();
     }
 
-    public bool IsBusy { get; private set; }
+    public bool IsBusy {
+      get => isBusy;
+      private set {
+        isBusy = value;
+        OnStatusChanged?.Invoke();
+      }
+    }
 
     public static IEnumerable<NetworkInterface> GetActiveVpnConnections(string connectionName = null) {
       if (!NetworkInterface.GetIsNetworkAvailable())
@@ -209,8 +213,7 @@ namespace AutoVPNConnect {
       }
     }
 
-    private void VPNConnectionCheckTimer_Tick(object sender, EventArgs e) {
-      if (!mSettingsManager.GetApplicationEnabledSetting()) return;
+    public void RestoreConnection() {
       if (!VpnIsConnected() && SettingsManager.ValidSettingsFound()) {
         ConnectToVpn();
       }

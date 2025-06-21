@@ -29,11 +29,11 @@
       this.tabControl = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.groupBoxGeneralSettings = new System.Windows.Forms.GroupBox();
-      this.checkBoxStartApplicationMinimized = new System.Windows.Forms.CheckBox();
+      this.cbxRunInBackground = new System.Windows.Forms.CheckBox();
       this.lblStartMinimized = new System.Windows.Forms.Label();
-      this.checkBoxApplicationEnabled = new System.Windows.Forms.CheckBox();
+      this.cbxReconnect = new System.Windows.Forms.CheckBox();
       this.lblApplicationEnabled = new System.Windows.Forms.Label();
-      this.checkBoxStartWithSystem = new System.Windows.Forms.CheckBox();
+      this.cbxAutoStart = new System.Windows.Forms.CheckBox();
       this.lblStartWithSystem = new System.Windows.Forms.Label();
       this.groupBoxStatus = new System.Windows.Forms.GroupBox();
       this.btnToggle = new System.Windows.Forms.Button();
@@ -103,11 +103,11 @@
       // 
       // groupBoxGeneralSettings
       // 
-      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxStartApplicationMinimized);
+      this.groupBoxGeneralSettings.Controls.Add(this.cbxRunInBackground);
       this.groupBoxGeneralSettings.Controls.Add(this.lblStartMinimized);
-      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxApplicationEnabled);
+      this.groupBoxGeneralSettings.Controls.Add(this.cbxReconnect);
       this.groupBoxGeneralSettings.Controls.Add(this.lblApplicationEnabled);
-      this.groupBoxGeneralSettings.Controls.Add(this.checkBoxStartWithSystem);
+      this.groupBoxGeneralSettings.Controls.Add(this.cbxAutoStart);
       this.groupBoxGeneralSettings.Controls.Add(this.lblStartWithSystem);
       this.groupBoxGeneralSettings.Dock = System.Windows.Forms.DockStyle.Fill;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(4, 109);
@@ -121,14 +121,14 @@
       // 
       // checkBoxStartApplicationMinimized
       // 
-      this.checkBoxStartApplicationMinimized.AutoSize = true;
-      this.checkBoxStartApplicationMinimized.Location = new System.Drawing.Point(390, 96);
-      this.checkBoxStartApplicationMinimized.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-      this.checkBoxStartApplicationMinimized.Name = "checkBoxStartApplicationMinimized";
-      this.checkBoxStartApplicationMinimized.Size = new System.Drawing.Size(22, 21);
-      this.checkBoxStartApplicationMinimized.TabIndex = 5;
-      this.checkBoxStartApplicationMinimized.UseVisualStyleBackColor = true;
-      this.checkBoxStartApplicationMinimized.CheckedChanged += new System.EventHandler(this.checkBoxStartApplicationMinimized_CheckedChanged);
+      this.cbxRunInBackground.AutoSize = true;
+      this.cbxRunInBackground.Location = new System.Drawing.Point(390, 96);
+      this.cbxRunInBackground.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.cbxRunInBackground.Name = "checkBoxStartApplicationMinimized";
+      this.cbxRunInBackground.Size = new System.Drawing.Size(22, 21);
+      this.cbxRunInBackground.TabIndex = 5;
+      this.cbxRunInBackground.UseVisualStyleBackColor = true;
+      this.cbxRunInBackground.CheckedChanged += new System.EventHandler(this.cbxRunInBackground_CheckedChanged);
       // 
       // lblStartMinimized
       // 
@@ -142,14 +142,14 @@
       // 
       // checkBoxApplicationEnabled
       // 
-      this.checkBoxApplicationEnabled.AutoSize = true;
-      this.checkBoxApplicationEnabled.Location = new System.Drawing.Point(390, 63);
-      this.checkBoxApplicationEnabled.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-      this.checkBoxApplicationEnabled.Name = "checkBoxApplicationEnabled";
-      this.checkBoxApplicationEnabled.Size = new System.Drawing.Size(22, 21);
-      this.checkBoxApplicationEnabled.TabIndex = 3;
-      this.checkBoxApplicationEnabled.UseVisualStyleBackColor = true;
-      this.checkBoxApplicationEnabled.CheckedChanged += new System.EventHandler(this.checkBoxApplicationEnabled_CheckedChanged);
+      this.cbxReconnect.AutoSize = true;
+      this.cbxReconnect.Location = new System.Drawing.Point(390, 63);
+      this.cbxReconnect.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.cbxReconnect.Name = "checkBoxApplicationEnabled";
+      this.cbxReconnect.Size = new System.Drawing.Size(22, 21);
+      this.cbxReconnect.TabIndex = 3;
+      this.cbxReconnect.UseVisualStyleBackColor = true;
+      this.cbxReconnect.CheckedChanged += new System.EventHandler(this.cbxReconnect_CheckedChanged);
       // 
       // lblApplicationEnabled
       // 
@@ -163,14 +163,14 @@
       // 
       // checkBoxStartWithSystem
       // 
-      this.checkBoxStartWithSystem.AutoSize = true;
-      this.checkBoxStartWithSystem.Location = new System.Drawing.Point(390, 29);
-      this.checkBoxStartWithSystem.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-      this.checkBoxStartWithSystem.Name = "checkBoxStartWithSystem";
-      this.checkBoxStartWithSystem.Size = new System.Drawing.Size(22, 21);
-      this.checkBoxStartWithSystem.TabIndex = 1;
-      this.checkBoxStartWithSystem.UseVisualStyleBackColor = true;
-      this.checkBoxStartWithSystem.CheckedChanged += new System.EventHandler(this.checkBoxStartWithSystem_CheckedChanged);
+      this.cbxAutoStart.AutoSize = true;
+      this.cbxAutoStart.Location = new System.Drawing.Point(390, 29);
+      this.cbxAutoStart.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+      this.cbxAutoStart.Name = "checkBoxStartWithSystem";
+      this.cbxAutoStart.Size = new System.Drawing.Size(22, 21);
+      this.cbxAutoStart.TabIndex = 1;
+      this.cbxAutoStart.UseVisualStyleBackColor = true;
+      this.cbxAutoStart.CheckedChanged += new System.EventHandler(this.cbxAutoStart_CheckedChanged);
       // 
       // lblStartWithSystem
       // 
@@ -362,12 +362,12 @@
     private System.Windows.Forms.Label lblUsername;
     private System.Windows.Forms.TextBox textBoxUsername;
     private System.Windows.Forms.GroupBox groupBoxGeneralSettings;
-    private System.Windows.Forms.CheckBox checkBoxStartWithSystem;
+    private System.Windows.Forms.CheckBox cbxAutoStart;
     private System.Windows.Forms.Label lblStartWithSystem;
-    private System.Windows.Forms.CheckBox checkBoxApplicationEnabled;
+    private System.Windows.Forms.CheckBox cbxReconnect;
     private System.Windows.Forms.Label lblApplicationEnabled;
     private System.Windows.Forms.Button btnSaveSettings;
-    private System.Windows.Forms.CheckBox checkBoxStartApplicationMinimized;
+    private System.Windows.Forms.CheckBox cbxRunInBackground;
     private System.Windows.Forms.Label lblStartMinimized;
     private System.Windows.Forms.Button btnToggle;
   }

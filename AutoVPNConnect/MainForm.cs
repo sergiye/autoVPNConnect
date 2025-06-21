@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
@@ -14,7 +15,6 @@ namespace AutoVPNConnect {
     private readonly NotifyIcon mNotifyIcon;
     private readonly MenuItem menuItemReconnect;
     private readonly MenuItem menuItemConnect;
-    private readonly Timer mUpdateUiTimer = new Timer();
     private readonly Icon redIcon;
     private readonly Icon yellowIcon;
     private bool showApp = false;
@@ -25,6 +25,7 @@ namespace AutoVPNConnect {
       Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       mSettingsManager = new SettingsManager();
       mConnectionManager = new ConnectionManager(ref mSettingsManager);
+      mConnectionManager.OnStatusChanged += UpdateUI;
 
       var assembly = Assembly.GetExecutingAssembly();
       using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Red.ico")) {
@@ -46,10 +47,9 @@ namespace AutoVPNConnect {
       }
 
       menuItemReconnect = new MenuItem("Auto connect", (s, e) => {
-        checkBoxApplicationEnabled.Checked = !checkBoxApplicationEnabled.Checked;
-      }) {
-        Checked = mSettingsManager.GetApplicationEnabledSetting(),
-      };
+        cbxReconnect.Checked = !cbxReconnect.Checked;
+      });
+      menuItemReconnect.Checked = mSettingsManager.GetApplicationEnabledSetting();
 
       btnToggle.Click += btnToggle_Click;
       menuItemConnect = new MenuItem("Connect", btnToggle_Click);
@@ -66,15 +66,12 @@ namespace AutoVPNConnect {
       };
       mNotifyIcon.MouseDoubleClick += menuItemShowHide_Click;
 
-      checkBoxStartWithSystem.Checked = mSettingsManager.GetApplicationStartWithSystem();
-      checkBoxApplicationEnabled.Checked = mSettingsManager.GetApplicationEnabledSetting();
-      checkBoxStartApplicationMinimized.Checked = mSettingsManager.GetStartApplicationMinimized();
-      showApp = !checkBoxStartApplicationMinimized.Checked;
+      cbxAutoStart.Checked = mSettingsManager.GetApplicationStartWithSystem();
+      cbxReconnect.Checked = mSettingsManager.GetApplicationEnabledSetting();
+      cbxRunInBackground.Checked = mSettingsManager.GetStartApplicationMinimized();
+      showApp = !cbxRunInBackground.Checked;
 
-      //Init timer
-      mUpdateUiTimer.Interval = 1500;
-      mUpdateUiTimer.Tick += UpdateUITimer_Tick;
-      UpdateUITimer_Tick(null, EventArgs.Empty);
+      UpdateUI();
     }
 
     private async void btnToggle_Click(object sender, EventArgs e) {
@@ -123,23 +120,35 @@ namespace AutoVPNConnect {
       }
     }
 
-    private void checkBoxStartWithSystem_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.SetApplicationStartWithSystem(checkBoxStartWithSystem.Checked);
+    private void cbxAutoStart_CheckedChanged(object sender, EventArgs e) {
+      mSettingsManager.SetApplicationStartWithSystem(cbxAutoStart.Checked);
     }
 
-    private void checkBoxApplicationEnabled_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.SetApplicationEnabledSetting(checkBoxApplicationEnabled.Checked);
-      menuItemReconnect.Checked = checkBoxApplicationEnabled.Checked;
+    private void cbxReconnect_CheckedChanged(object sender, EventArgs e) {
+      mSettingsManager.SetApplicationEnabledSetting(cbxReconnect.Checked);
+      menuItemReconnect.Checked = cbxReconnect.Checked;
+      if (cbxReconnect.Checked) {
+        new Task(async () => {
+          await Task.Delay(300);
+          mConnectionManager?.RestoreConnection();
+        }).Start();
+      }
     }
 
-    private void checkBoxStartApplicationMinimized_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.SetStartApplicationMinimized(checkBoxStartApplicationMinimized.Checked);
-      mNotifyIcon.Visible = checkBoxStartApplicationMinimized.Checked;
+    private void cbxRunInBackground_CheckedChanged(object sender, EventArgs e) {
+      mSettingsManager.SetStartApplicationMinimized(cbxRunInBackground.Checked);
+      mNotifyIcon.Visible = cbxRunInBackground.Checked;
     }
 
-    void UpdateUITimer_Tick(object sender, EventArgs e) {
+    void UpdateUI() {
 
-      mUpdateUiTimer.Enabled = false;
+      if (this.InvokeRequired) {
+        if (InvokeRequired) {
+          Invoke(new Action(UpdateUI));
+          return;
+        }
+      }
+
       var connectionName = mSettingsManager?.GetConnectionName();
       var isConnecting = mConnectionManager?.IsBusy ?? false;
       var isConnected = mConnectionManager?.VpnIsConnected() ?? false;
@@ -159,8 +168,6 @@ namespace AutoVPNConnect {
       //mNotifyIcon.BalloonTipTitle = "AutoVPNConnect";
       //mNotifyIcon.BalloonTipText = "AutoVPNConnect runs in background";
       //mNotifyIcon.ShowBalloonTip(1000);
-      
-      mUpdateUiTimer.Enabled = true;
     }
 
     private void menuItemShowHide_Click(object sender, EventArgs e) {
@@ -172,11 +179,11 @@ namespace AutoVPNConnect {
 
     private void toolStripMenuItemExit_Click(object sender, EventArgs e) {
       mNotifyIcon.Visible = false;
-      Close();
+      Environment.Exit(0);
     }
 
     private void AutoVPNConnect_FormClosing(object sender, FormClosingEventArgs e) {
-      if (mNotifyIcon.Visible) {
+      if (cbxRunInBackground.Checked) {
         showApp = false;
         Visible = false;
         e.Cancel = true;
