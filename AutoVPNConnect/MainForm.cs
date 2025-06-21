@@ -63,7 +63,6 @@ namespace AutoVPNConnect {
             new MenuItem("-"),
             new MenuItem("Exit", toolStripMenuItemExit_Click)}),
         Icon = yellowIcon ?? Icon,
-        Visible = true
       };
       mNotifyIcon.MouseDoubleClick += menuItemShowHide_Click;
 
@@ -135,6 +134,7 @@ namespace AutoVPNConnect {
 
     private void checkBoxStartApplicationMinimized_CheckedChanged(object sender, EventArgs e) {
       mSettingsManager.SetStartApplicationMinimized(checkBoxStartApplicationMinimized.Checked);
+      mNotifyIcon.Visible = checkBoxStartApplicationMinimized.Checked;
     }
 
     void UpdateUITimer_Tick(object sender, EventArgs e) {
@@ -172,13 +172,15 @@ namespace AutoVPNConnect {
 
     private void toolStripMenuItemExit_Click(object sender, EventArgs e) {
       mNotifyIcon.Visible = false;
-      Environment.Exit(0);
+      Close();
     }
 
     private void AutoVPNConnect_FormClosing(object sender, FormClosingEventArgs e) {
-      showApp = false;
-      Visible = false;
-      e.Cancel = true;
+      if (mNotifyIcon.Visible) {
+        showApp = false;
+        Visible = false;
+        e.Cancel = true;
+      }
     }
   }
 }

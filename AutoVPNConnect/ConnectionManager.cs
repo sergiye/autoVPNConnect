@@ -62,9 +62,15 @@ namespace AutoVPNConnect {
       mSettingsManager = rSettingsManager;
 
       //Init timer
-      vpnConnectionCheckTimer.Interval = 10000;
+      vpnConnectionCheckTimer.Interval = 60000;
       vpnConnectionCheckTimer.Enabled = true;
       vpnConnectionCheckTimer.Tick += VPNConnectionCheckTimer_Tick;
+
+      NetworkChange.NetworkAddressChanged += NetworkAddressChanged;
+    }
+
+    private void NetworkAddressChanged(object sender, EventArgs e) {
+      VPNConnectionCheckTimer_Tick(sender, e);
     }
 
     public bool IsBusy { get; private set; }

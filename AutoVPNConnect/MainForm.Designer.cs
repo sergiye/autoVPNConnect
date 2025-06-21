@@ -138,7 +138,7 @@
       this.lblStartMinimized.Name = "lblStartMinimized";
       this.lblStartMinimized.Size = new System.Drawing.Size(118, 20);
       this.lblStartMinimized.TabIndex = 4;
-      this.lblStartMinimized.Text = "Start minimized";
+      this.lblStartMinimized.Text = "Run in background";
       // 
       // checkBoxApplicationEnabled
       // 
