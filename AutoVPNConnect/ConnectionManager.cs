@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace AutoVPNConnect {
+
   class ConnectionManager {
 
     private const int RAS_MaxEntryName = 256;
@@ -38,13 +39,7 @@ namespace AutoVPNConnect {
     }
 
     [DllImport("rasapi32.dll", CharSet = CharSet.Auto)]
-    private static extern uint RasDial(
-        IntPtr lpRasDialExtensions,
-        string lpszPhonebook,
-        ref RASDIALPARAMS lpRasDialParams,
-        int dwNotifierType,
-        IntPtr lpvNotifier,
-        out IntPtr lphRasConn);
+    private static extern uint RasDial(IntPtr lpRasDialExtensions, string lpszPhonebook, ref RASDIALPARAMS lpRasDialParams, int dwNotifierType, IntPtr lpvNotifier, out IntPtr lphRasConn);
 
     [DllImport("rasapi32.dll", SetLastError = true)]
     private static extern uint RasHangUp(IntPtr hRasConn);
@@ -65,7 +60,7 @@ namespace AutoVPNConnect {
     public event Action OnStatusChanged;
 
     private void NetworkAddressChanged(object sender, EventArgs e) {
-      if (mSettingsManager.GetApplicationEnabledSetting()) {
+      if (mSettingsManager.Reconnect) {
         RestoreConnection();
       }
       OnStatusChanged?.Invoke();
@@ -96,13 +91,13 @@ namespace AutoVPNConnect {
     }
 
     public bool VpnIsConnected() {
-      var vpnConnectionName = mSettingsManager.GetConnectionName();
+      var vpnConnectionName = mSettingsManager.VpnConnectionName;
       return GetActiveVpnConnections(vpnConnectionName).Any();
       //todo: hRasConn = IntPtr.Zero;
     }
 
-    public Task ToggleConnection() {
-      return Task.Run(() => {
+    public void ToggleConnection() {
+      Task.Run(() => {
         if (VpnIsConnected()) {
           DisconnectFromVpn();
         }
@@ -115,7 +110,7 @@ namespace AutoVPNConnect {
     private string GetRasError(uint errorCode) {
       var sb = new StringBuilder(512);
       RasGetErrorString(errorCode, sb, sb.Capacity);
-      return $"Ошибка {errorCode}: {sb}";
+      return $"Error {errorCode}: {sb}";
     }
 
     private string DisconnectFromVpn() {
@@ -135,7 +130,7 @@ namespace AutoVPNConnect {
           //}
         }
 
-        var vpnName = mSettingsManager.GetConnectionName();
+        var vpnName = mSettingsManager.VpnConnectionName;
         var process = Process.Start(new ProcessStartInfo("rasdial.exe", $" \u0022{vpnName}\u0022 /disconnect") {
           RedirectStandardOutput = true,
           UseShellExecute = false,
@@ -158,9 +153,9 @@ namespace AutoVPNConnect {
       if (IsBusy) return "Busy";
       try {
         IsBusy = true;
-        var vpnName = mSettingsManager.GetConnectionName();
-        var userName = mSettingsManager.GetUserName();
-        var password = mSettingsManager.GetPassword();
+        var vpnName = mSettingsManager.VpnConnectionName;
+        var userName = mSettingsManager.UserName;
+        var password = mSettingsManager.Password;
 
         var dialParams = new RASDIALPARAMS();
         dialParams.dwSize = Marshal.SizeOf(typeof(RASDIALPARAMS));
@@ -176,6 +171,8 @@ namespace AutoVPNConnect {
             return GetRasError(ret);
         }
         if (hasPassword && !string.IsNullOrEmpty(dialParams.szUserName)) {
+          mSettingsManager.UserName = dialParams.szUserName;
+          mSettingsManager.Password = dialParams.szPassword;
           var ret = RasDial(IntPtr.Zero, null, ref dialParams, 0, IntPtr.Zero, out IntPtr conn);
           if (ret != 0)
             return GetRasError(ret);
@@ -214,7 +211,7 @@ namespace AutoVPNConnect {
     }
 
     public void RestoreConnection() {
-      if (!VpnIsConnected() && SettingsManager.ValidSettingsFound()) {
+      if (!VpnIsConnected() && mSettingsManager.IsConnectionConfigured) {
         ConnectToVpn();
       }
     }

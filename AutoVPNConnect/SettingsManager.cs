@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using sergiye.Common;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -6,113 +7,77 @@ using System.Windows.Forms;
 
 namespace AutoVPNConnect {
   class SettingsManager {
-    private const string RegistryPath = @"Software\sergiye\AutoVPNConnect";
-    private string vpnConnectionName = "No settings found";
-    private string username = "";
-    private string password = "";
+    private static readonly string RegistryPath = $@"Software\{Updater.ApplicationCompany}\{Updater.ApplicationName}";
 
-    private bool startApplicationWithSystem = true;
-    private bool applicationEnabled = true;
-    private bool startApplicationMinimized;
+    private string vpnConnectionName;
+    private string username;
+    private string password;
+    private string theme;
+    private bool reconnect;
+    private bool runInBackground;
+    private bool alwaysOnTop;
 
-    private readonly string encryptionKey = "123456789012345678901234";
+    private static readonly string encryptionKey = "123456789012345678901234";
 
     public SettingsManager() {
-      if (ValidSettingsFound()) {
-        ReadSettings();
-      }
+      ReadSettings();
     }
 
-    private static bool SettingsRegistryFound() {
-      var key = Registry.CurrentUser.OpenSubKey(RegistryPath);
-      return key != null;
-    }
-
-    internal static bool ValidSettingsFound() {
-      if (SettingsRegistryFound() == false) {
-        return false;
-      }
-
-      var key = Registry.CurrentUser.OpenSubKey(RegistryPath);
-
-      if (key == null) {
-        return false;
-      }
-
-      string connectionName;
-      // string userName;
-      // string password;
-      try {
-        connectionName = key.GetValue("VPNConnectionName").ToString();
-        // userName = key.GetValue("Username").ToString();
-        // password = key.GetValue("Password").ToString();
-        key.Close();
-      }
-      catch {
-        key.Close();
-        return false;
-      }
-
-      return connectionName != "No settings found";
-    }
+    internal bool IsConnectionConfigured => !string.IsNullOrEmpty(VpnConnectionName) && VpnConnectionName != "No settings found";
 
     private void ReadSettings() {
-      var key = Registry.CurrentUser.OpenSubKey(RegistryPath);
-      if (key == null) {
-        return;
-      }
       try {
-        vpnConnectionName = key.GetValue("VPNConnectionName").ToString();
-        username = key.GetValue("Username").ToString();
-        var encryptedPassword = key.GetValue("Password").ToString();
-        password = DecryptPassword(encryptedPassword);
-
-        var applicationStartWithSystem = key.GetValue("StartApplicationWithSystem").ToString();
-        startApplicationWithSystem = applicationStartWithSystem == "True";
-        applicationEnabled = key.GetValue("ApplicationEnabled").ToString() == "True";
-        startApplicationMinimized = key.GetValue("StartApplicationMinimized").ToString() == "True";
-
-        key.Close();
+        using (var key = Registry.CurrentUser.OpenSubKey(RegistryPath)) {
+          if (key != null) {
+            vpnConnectionName = key.GetValue("VPNConnectionName")?.ToString() ?? "No settings found";
+            username = key.GetValue("Username")?.ToString() ?? "";
+            var encryptedPassword = key.GetValue("Password")?.ToString();
+            password = Decrypt(encryptedPassword) ?? "";
+            theme = key.GetValue("Theme")?.ToString();
+            reconnect = key.GetValue("ApplicationEnabled")?.ToString() == "True";
+            runInBackground = key.GetValue("StartApplicationMinimized")?.ToString() == "True";
+            alwaysOnTop = key.GetValue("AlwaysOnTop")?.ToString() == "True";
+          }
+        }
       }
       catch {
-        key.Close();
+        //ignore
       }
     }
 
     private void WriteSettings() {
-      if (SettingsRegistryFound()) {
-        Registry.CurrentUser.DeleteSubKey(RegistryPath);
-      }
-      Registry.CurrentUser.CreateSubKey(RegistryPath);
-
-      var key = Registry.CurrentUser.OpenSubKey(RegistryPath, true);
-      if (key == null) {
-        MessageBox.Show("Error while writing settings", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        return;
-      }
-
       try {
-        var encryptedPassword = EncryptPassword();
-        key.SetValue("VPNConnectionName", vpnConnectionName, RegistryValueKind.String);
-        key.SetValue("Username", username, RegistryValueKind.String);
-        key.SetValue("Password", encryptedPassword, RegistryValueKind.String);
-        key.SetValue("StartApplicationWithSystem", startApplicationWithSystem, RegistryValueKind.String);
-        key.SetValue("ApplicationEnabled", applicationEnabled, RegistryValueKind.String);
-        key.SetValue("StartApplicationMinimized", startApplicationMinimized, RegistryValueKind.String);
+        Registry.CurrentUser.DeleteSubKey(RegistryPath, false);
+        using (var key = Registry.CurrentUser.CreateSubKey(RegistryPath, true)) {
+          if (key != null) {
+            if (!string.IsNullOrEmpty(vpnConnectionName))
+              key.SetValue("VPNConnectionName", vpnConnectionName, RegistryValueKind.String);
+            if (!string.IsNullOrEmpty(username))
+              key.SetValue("Username", username, RegistryValueKind.String);
+            var encryptedPassword = Encrypt(password);
+            if (!string.IsNullOrEmpty(encryptedPassword))
+              key.SetValue("Password", encryptedPassword, RegistryValueKind.String);
+            if (!string.IsNullOrEmpty(theme))
+              key.SetValue("Theme", theme, RegistryValueKind.String);
+            key.SetValue("ApplicationEnabled", reconnect, RegistryValueKind.String);
+            key.SetValue("StartApplicationMinimized", runInBackground, RegistryValueKind.String);
+            key.SetValue("AlwaysOnTop", alwaysOnTop, RegistryValueKind.String);
+          }
+          else {
+            throw new Exception("Registry unavailable");
+          }
+        }
       }
-      catch {
-        MessageBox.Show("Error while writing settings", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      catch(Exception ex) {
+        MessageBox.Show("Error while writing settings: " + ex.Message, Updater.ApplicationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
-
-      key.Close();
     }
 
-    private string EncryptPassword() {
-      if (string.IsNullOrEmpty(password)) {
-        return "";
-      }
+    private static string Encrypt(string value) {
+      if (string.IsNullOrEmpty(value))
+        return null;
 
-      var inputArray = Encoding.UTF8.GetBytes(password);
+      var inputArray = Encoding.UTF8.GetBytes(value);
       var tripleDes = new TripleDESCryptoServiceProvider();
       tripleDes.Key = Encoding.UTF8.GetBytes(encryptionKey);
       tripleDes.Mode = CipherMode.ECB;
@@ -123,10 +88,9 @@ namespace AutoVPNConnect {
       return Convert.ToBase64String(resultArray, 0, resultArray.Length);
     }
 
-    private string DecryptPassword(string encryptedPassword) {
-      if (encryptedPassword == "") {
-        return "";
-      }
+    private static string Decrypt(string encryptedPassword) {
+      if (string.IsNullOrEmpty(encryptedPassword))
+        return encryptedPassword;
 
       var inputArray = Convert.FromBase64String(encryptedPassword);
       var tripleDes = new TripleDESCryptoServiceProvider();
@@ -139,73 +103,98 @@ namespace AutoVPNConnect {
       return Encoding.UTF8.GetString(resultArray);
     }
 
-    public void SetConnectionName(string connectionName) {
-      vpnConnectionName = connectionName;
-      WriteSettings();
-    }
-
-    public string GetConnectionName() {
-      return vpnConnectionName;
-    }
-
-    public void SetUserName(string userName) {
-      username = userName;
-      WriteSettings();
-    }
-
-    public string GetUserName() {
-      return username;
-    }
-
-    public void SetPassword(string value) {
-      password = value;
-      WriteSettings();
-    }
-
-    public string GetPassword() {
-      return password;
-    }
-
-    public void SetApplicationStartWithSystem(bool enabled) {
-      var registryKey = Registry.CurrentUser.OpenSubKey
-      ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-
+    private bool GetApplicationStartWithSystem() {
       try {
-        if (enabled) {
-          registryKey.SetValue("AutoVPNConnect", Application.ExecutablePath);
-        }
-        else {
-          registryKey.DeleteValue("AutoVPNConnect");
+        using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")) {
+          var regValue = key.GetValue("AutoVPNConnect")?.ToString();
+          return regValue == Updater.CurrentFileLocation;
         }
       }
       catch {
-        MessageBox.Show("Error while writing settings", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        return false;
       }
-
-      startApplicationWithSystem = enabled;
-      WriteSettings();
     }
 
-    public bool GetApplicationStartWithSystem() {
-      return startApplicationWithSystem;
+    private void SetApplicationStartWithSystem(bool enabled) {
+      try {
+        using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
+          if (enabled)
+            key.SetValue("AutoVPNConnect", Application.ExecutablePath);
+          else
+            key.DeleteValue("AutoVPNConnect", false);
+        }
+      }
+      catch (Exception ex) {
+        MessageBox.Show("Error while changing application auto start: " + ex.Message, Updater.ApplicationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+      }
     }
 
-    public void SetApplicationEnabledSetting(bool enabled) {
-      applicationEnabled = enabled;
-      WriteSettings();
+    public string VpnConnectionName {
+      get => vpnConnectionName;
+      set {
+        if (vpnConnectionName == value) return;
+        vpnConnectionName = value;
+        WriteSettings();
+      }
     }
 
-    public bool GetApplicationEnabledSetting() {
-      return applicationEnabled;
+    public string UserName {
+      get => username;
+      set {
+        if (username == value) return;
+        username = value;
+        WriteSettings();
+      }
     }
 
-    public void SetStartApplicationMinimized(bool enabled) {
-      startApplicationMinimized = enabled;
-      WriteSettings();
+    public string Password {
+      get => password;
+      set {
+        if (password == value) return;
+        password = value;
+        WriteSettings();
+      }
     }
 
-    public bool GetStartApplicationMinimized() {
-      return startApplicationMinimized;
+    public string Theme {
+      get => theme;
+      set {
+        if (theme == value) return;
+        theme = value;
+        WriteSettings();
+      }
+    }
+
+    public bool AutoStartApp {
+      get => GetApplicationStartWithSystem();
+      set => SetApplicationStartWithSystem(value);
+    }
+
+    public bool Reconnect {
+      get => reconnect;
+      set {
+        if (reconnect == value) return;
+        reconnect = value;
+        WriteSettings();
+      }
+    }
+
+    public bool RunInBackground {
+      get => runInBackground;
+      set {
+        if (runInBackground == value) return;
+        runInBackground = value;
+        WriteSettings();
+      }
+    }
+
+    public bool AlwaysOnTop {
+      get => alwaysOnTop;
+      set {
+        if (alwaysOnTop == value) return;
+        alwaysOnTop = value;
+        WriteSettings();
+      }
     }
   }
 }
