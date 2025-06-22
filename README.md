@@ -20,7 +20,14 @@ AutoVPNConnect - is free software that can auto reconnect your VPN if it was dis
 
 ### UI example 
 
+Main app window:
 [<img src="https://github.com/sergiye/AutoVPNConnect/raw/master/preview.png" alt="Preview" width="300"/>](https://raw.githubusercontent.com/sergiye/AutoVPNConnect/master/preview.png)
+
+Extended app system menu:
+[<img src="https://github.com/sergiye/AutoVPNConnect/raw/master/sysMenu.png" alt="Preview" width="300"/>](https://raw.githubusercontent.com/sergiye/AutoVPNConnect/master/sysMenu.png)
+
+System tray integration with menu:
+[<img src="https://github.com/sergiye/AutoVPNConnect/raw/master/sysTray.png" alt="Preview" width="300"/>](https://raw.githubusercontent.com/sergiye/AutoVPNConnect/master/sysTray.png)
 
 ## Download
 

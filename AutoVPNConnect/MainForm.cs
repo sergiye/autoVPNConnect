@@ -41,7 +41,7 @@ namespace AutoVPNConnect {
       WinApiHelper.DeleteMenu(hSysMenu, WinApiHelper.SC_MINIMIZE, WinApiHelper.MF_BY_COMMAND);
       WinApiHelper.DeleteMenu(hSysMenu, WinApiHelper.SC_MAXIMIZE, WinApiHelper.MF_BY_COMMAND);
 
-      uint menuIndex = 2;
+      uint menuIndex = 1;
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_SEPARATOR, 0, string.Empty);
       var checkedAttr = TopMost ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED;
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | checkedAttr, SysMenuTopMost, "Always on top");
