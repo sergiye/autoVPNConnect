@@ -7,12 +7,12 @@ using System.Windows.Forms;
 
 namespace AutoVPNConnect {
   class SettingsManager {
-    private static string RegistryPath = $@"Software\{Updater.ApplicationCompany}\{Updater.ApplicationName}";
+    private static readonly string RegistryPath = $@"Software\{Updater.ApplicationCompany}\{Updater.ApplicationName}";
 
-    private string vpnConnectionName = "No settings found";
-    private string username = "";
-    private string password = "";
-    private string theme = "";
+    private string vpnConnectionName;
+    private string username;
+    private string password;
+    private string theme;
     private bool reconnect;
     private bool runInBackground;
     private bool alwaysOnTop;
@@ -26,31 +26,26 @@ namespace AutoVPNConnect {
     internal bool IsConnectionConfigured => !string.IsNullOrEmpty(VpnConnectionName) && VpnConnectionName != "No settings found";
 
     private void ReadSettings() {
-      var key = Registry.CurrentUser.OpenSubKey(RegistryPath);
-      if (key == null) {
-        return;
-      }
       try {
-        vpnConnectionName = key.GetValue("VPNConnectionName")?.ToString();
-        username = key.GetValue("Username")?.ToString() ?? "";
-        var encryptedPassword = key.GetValue("Password")?.ToString();
-        password = Decrypt(encryptedPassword) ?? "";
-        
-        theme = key.GetValue("Theme")?.ToString();
-
-        reconnect = key.GetValue("ApplicationEnabled")?.ToString() == "True";
-        runInBackground = key.GetValue("StartApplicationMinimized")?.ToString() == "True";
-        alwaysOnTop = key.GetValue("AlwaysOnTop")?.ToString() == "True";
-
-        key.Close();
+        using (var key = Registry.CurrentUser.OpenSubKey(RegistryPath)) {
+          if (key != null) {
+            vpnConnectionName = key.GetValue("VPNConnectionName")?.ToString() ?? "No settings found";
+            username = key.GetValue("Username")?.ToString() ?? "";
+            var encryptedPassword = key.GetValue("Password")?.ToString();
+            password = Decrypt(encryptedPassword) ?? "";
+            theme = key.GetValue("Theme")?.ToString();
+            reconnect = key.GetValue("ApplicationEnabled")?.ToString() == "True";
+            runInBackground = key.GetValue("StartApplicationMinimized")?.ToString() == "True";
+            alwaysOnTop = key.GetValue("AlwaysOnTop")?.ToString() == "True";
+          }
+        }
       }
       catch {
-        key.Close();
+        //ignore
       }
     }
 
     private void WriteSettings() {
-
       try {
         Registry.CurrentUser.DeleteSubKey(RegistryPath, false);
         using (var key = Registry.CurrentUser.CreateSubKey(RegistryPath, true)) {
@@ -79,9 +74,8 @@ namespace AutoVPNConnect {
     }
 
     private static string Encrypt(string value) {
-      if (string.IsNullOrEmpty(value)) {
+      if (string.IsNullOrEmpty(value))
         return null;
-      }
 
       var inputArray = Encoding.UTF8.GetBytes(value);
       var tripleDes = new TripleDESCryptoServiceProvider();
@@ -111,8 +105,8 @@ namespace AutoVPNConnect {
 
     private bool GetApplicationStartWithSystem() {
       try {
-        using (var registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")) {
-          var regValue = registryKey.GetValue("AutoVPNConnect")?.ToString();
+        using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")) {
+          var regValue = key.GetValue("AutoVPNConnect")?.ToString();
           return regValue == Updater.CurrentFileLocation;
         }
       }
@@ -123,11 +117,11 @@ namespace AutoVPNConnect {
 
     private void SetApplicationStartWithSystem(bool enabled) {
       try {
-        using (var registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
+        using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
           if (enabled)
-            registryKey.SetValue("AutoVPNConnect", Application.ExecutablePath);
+            key.SetValue("AutoVPNConnect", Application.ExecutablePath);
           else
-            registryKey.DeleteValue("AutoVPNConnect", false);
+            key.DeleteValue("AutoVPNConnect", false);
         }
       }
       catch (Exception ex) {

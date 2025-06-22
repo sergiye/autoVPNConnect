@@ -114,10 +114,10 @@ namespace AutoVPNConnect {
       mConnectionManager.OnStatusChanged += UpdateUI;
 
       var assembly = Assembly.GetExecutingAssembly();
-      using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Red.ico")) {
+      using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Resources.Red.ico")) {
         redIcon = new Icon(st);
       }
-      using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Yellow.ico")) {
+      using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Resources.Yellow.ico")) {
         yellowIcon = new Icon(st);
       }
 
@@ -137,10 +137,10 @@ namespace AutoVPNConnect {
       mNotifyIcon.ContextMenuStrip.Items.AddRange(
         new ToolStripItem[] {
           new ToolStripMenuItem("Show/Hide", null, menuItemShowHide_Click),
+          menuItemConnect,
           new ToolStripSeparator(),
           menuItemAutoStart,
           menuItemReconnect,
-          menuItemConnect,
           new ToolStripSeparator(),
           new ToolStripMenuItem("Site", null, (s, e) => Updater.VisitAppSite()),
           new ToolStripMenuItem("Check for updates", null, (s, e) => Updater.CheckForUpdates(false)),

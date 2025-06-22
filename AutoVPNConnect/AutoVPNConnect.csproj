@@ -4,7 +4,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
@@ -45,8 +45,8 @@
     <EmbeddedResource Update="MainForm.resx" DependentUpon="MainForm.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Icon.ico" />
-    <EmbeddedResource Include="Yellow.ico" />
-    <EmbeddedResource Include="Red.ico" />
+    <Content Include="Resources\Icon.ico" />
+    <EmbeddedResource Include="Resources\Yellow.ico" />
+    <EmbeddedResource Include="Resources\Red.ico" />
   </ItemGroup>
 </Project>
