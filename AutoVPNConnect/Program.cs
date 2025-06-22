@@ -1,8 +1,5 @@
 ﻿using sergiye.Common;
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
@@ -24,24 +21,9 @@ namespace AutoVPNConnect {
         Environment.Exit(0);
       }
 
-      var currentProcessId = Process.GetCurrentProcess().Id;
-      var processName = Path.GetFileNameWithoutExtension(Updater.CurrentFileLocation);
-      var currentSessionID = Process.GetCurrentProcess().SessionId;
-      var startedInstances = Process.GetProcessesByName(processName)
-        .Where(p => p.SessionId == currentSessionID && p.Id != currentProcessId).ToArray();
-      foreach (var process in startedInstances) {
-        process.Refresh();
-        var hwnd = process.MainWindowHandle;
-        if (hwnd == IntPtr.Zero)
-          hwnd = WinApiHelper.FindWindow(null, Updater.ApplicationTitle);
-        WinApiHelper.SendMessage(hwnd, WinApiHelper.WM_SHOWME, 0, IntPtr.Zero);
-      }
-      if (startedInstances.Length > 0) {
-#if DEBUG
+      if (WinApiHelper.CheckRunningInstances(true, true)) {
         MessageBox.Show($"{Updater.ApplicationTitle} is already running.\nIt is recommended to close this instance.", Updater.ApplicationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-#else
         Environment.Exit(0);
-#endif
       }
 
       Application.EnableVisualStyles();
