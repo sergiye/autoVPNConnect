@@ -72,12 +72,7 @@ namespace AutoVPNConnect {
         }
       }
       else if (m.Msg == WinApiHelper.WM_SHOWME) {
-        if (WindowState == FormWindowState.Minimized)
-          WindowState = FormWindowState.Normal;
-        Activate();
-        //bool top = TopMost;
-        //TopMost = true;
-        //TopMost = top;
+        SetAppVisible(true);
       }
     }
 
@@ -350,10 +345,20 @@ namespace AutoVPNConnect {
     }
 
     private void menuItemShowHide_Click(object sender, EventArgs e) {
-      showApp = !showApp;
-      Visible = !Visible;
-      if (Visible)
+      SetAppVisible(!showApp);
+    }
+
+    private void SetAppVisible(bool visible) {
+      Visible = showApp = visible;
+      if (Visible) {
+        if (WindowState == FormWindowState.Minimized)
+          WindowState = FormWindowState.Normal;
+        BringToFront();
         Activate();
+        //bool top = TopMost;
+        //TopMost = true;
+        //TopMost = top;
+      }
     }
 
     private void toolStripMenuItemExit_Click(object sender, EventArgs e) {
