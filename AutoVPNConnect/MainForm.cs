@@ -170,6 +170,7 @@ namespace AutoVPNConnect {
     #region themes
 
     private void OnThemeCurrentChanged() {
+      mSettingsManager.Theme = Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id;
       UpdateUI();
     }
 
@@ -177,60 +178,19 @@ namespace AutoVPNConnect {
 
       mNotifyIcon.ContextMenuStrip.Renderer = new ThemedToolStripRenderer();
 
-      Theme.OnCurrentChanged -= OnThemeCurrentChanged;
-
       var menuHandle = WinApiHelper.GetSystemMenu(Handle, false);
       WinApiHelper.RemoveMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION);
       themeMenuItem.MenuItems.Clear();
 
-      if (Theme.SupportsAutoThemeSwitching()) {
-        themeMenuItem.MenuItems.Add(new RadioButtonMenuItem("Auto", (o, e) => {
-          (o as RadioButtonMenuItem).Checked = true;
-          Theme.SetAutoTheme();
-          mSettingsManager.Theme = "auto";
-        }));
-      }
-
-      var settingsTheme = mSettingsManager.Theme;
-      var allThemes = CustomTheme.GetAllThemes("themes", "AutoVPNConnect.themes").OrderBy(x => x.DisplayName).ToList();
-      var setTheme = allThemes.FirstOrDefault(theme => settingsTheme == theme.Id);
-      if (setTheme != null) {
-        Theme.Current = setTheme;
-      }
-
-      AddThemeMenuItems(allThemes.Where(t => t is not CustomTheme));
-      var customThemes = allThemes.Where(t => t is CustomTheme).ToList();
-      if (customThemes.Count > 0) {
-        themeMenuItem.MenuItems.Add("-");
-        AddThemeMenuItems(customThemes);
-      }
-
-      if (setTheme == null && themeMenuItem.MenuItems.Count > 0)
-        themeMenuItem.MenuItems[0].PerformClick();
-      WinApiHelper.InsertMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
-
-      Theme.Current.Apply(this);
-      OnThemeCurrentChanged();
-      Theme.OnCurrentChanged += OnThemeCurrentChanged;
-    }
-
-    private void AddThemeMenuItems(IEnumerable<Theme> themes) {
-      foreach (var theme in themes) {
-        var item = new RadioButtonMenuItem(theme.DisplayName, OnThemeMenuItemClick);
+      var currentItem = CustomTheme.FillThemesMenu((text, theme, onClick) => {
+        var item = new RadioButtonMenuItem(text, onClick);
         themeMenuItem.MenuItems.Add(item);
         item.Tag = theme;
-        if (Theme.Current != null && Theme.Current.Id == theme.Id) {
-          item.Checked = true;
-        }
-      }
-    }
-
-    private void OnThemeMenuItemClick(object sender, EventArgs e) {
-      if (sender is not RadioButtonMenuItem item || item.Tag is not Theme theme)
-        return;
-      item.Checked = true;
-      Theme.Current = theme;
-      mSettingsManager.Theme = theme.Id;
+        return item;
+      }, OnThemeCurrentChanged, mSettingsManager.Theme, "AutoVPNConnect.themes");
+      WinApiHelper.InsertMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
+      currentItem?.PerformClick();
+      Theme.Current.Apply(this);
     }
 
     #endregion
