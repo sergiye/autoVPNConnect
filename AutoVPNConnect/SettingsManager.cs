@@ -1,77 +1,20 @@
-﻿using Microsoft.Win32;
-using sergiye.Common;
+﻿using sergiye.Common;
 using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace AutoVPNConnect {
   class SettingsManager {
-    private static readonly string RegistryPath = $@"Software\{Updater.ApplicationCompany}\{Updater.ApplicationName}";
-
-    private string vpnConnectionName;
-    private string username;
-    private string password;
-    private string theme;
-    private bool reconnect;
-    private bool runInBackground;
-    private bool alwaysOnTop;
-
+    private readonly PersistentSettings settings;
     private static readonly string encryptionKey = "123456789012345678901234";
 
-    public SettingsManager() {
-      ReadSettings();
+    public SettingsManager(PersistentSettings settings) {
+      this.settings = settings;
     }
 
     internal bool IsConnectionConfigured => !string.IsNullOrEmpty(VpnConnectionName) && VpnConnectionName != "No settings found";
-
-    private void ReadSettings() {
-      try {
-        using (var key = Registry.CurrentUser.OpenSubKey(RegistryPath)) {
-          if (key != null) {
-            vpnConnectionName = key.GetValue("VPNConnectionName")?.ToString() ?? "No settings found";
-            username = key.GetValue("Username")?.ToString() ?? "";
-            var encryptedPassword = key.GetValue("Password")?.ToString();
-            password = Decrypt(encryptedPassword) ?? "";
-            theme = key.GetValue("Theme")?.ToString();
-            reconnect = key.GetValue("ApplicationEnabled")?.ToString() == "True";
-            runInBackground = key.GetValue("StartApplicationMinimized")?.ToString() == "True";
-            alwaysOnTop = key.GetValue("AlwaysOnTop")?.ToString() == "True";
-          }
-        }
-      }
-      catch {
-        //ignore
-      }
-    }
-
-    private void WriteSettings() {
-      try {
-        Registry.CurrentUser.DeleteSubKey(RegistryPath, false);
-        using (var key = Registry.CurrentUser.CreateSubKey(RegistryPath, true)) {
-          if (key != null) {
-            if (!string.IsNullOrEmpty(vpnConnectionName))
-              key.SetValue("VPNConnectionName", vpnConnectionName, RegistryValueKind.String);
-            if (!string.IsNullOrEmpty(username))
-              key.SetValue("Username", username, RegistryValueKind.String);
-            var encryptedPassword = Encrypt(password);
-            if (!string.IsNullOrEmpty(encryptedPassword))
-              key.SetValue("Password", encryptedPassword, RegistryValueKind.String);
-            if (!string.IsNullOrEmpty(theme))
-              key.SetValue("Theme", theme, RegistryValueKind.String);
-            key.SetValue("ApplicationEnabled", reconnect, RegistryValueKind.String);
-            key.SetValue("StartApplicationMinimized", runInBackground, RegistryValueKind.String);
-            key.SetValue("AlwaysOnTop", alwaysOnTop, RegistryValueKind.String);
-          }
-          else {
-            throw new Exception("Registry unavailable");
-          }
-        }
-      }
-      catch(Exception ex) {
-        MessageBox.Show("Error while writing settings: " + ex.Message, Updater.ApplicationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-      }
-    }
 
     private static string Encrypt(string value) {
       if (string.IsNullOrEmpty(value))
@@ -106,22 +49,27 @@ namespace AutoVPNConnect {
     private bool GetApplicationStartWithSystem() {
       try {
         using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")) {
-          var regValue = key.GetValue("AutoVPNConnect")?.ToString();
-          return regValue == Updater.CurrentFileLocation;
+          if (key != null) {
+            var regValue = key.GetValue(Updater.ApplicationName)?.ToString();
+            return regValue == Updater.CurrentFileLocation;
+          }
         }
       }
       catch {
-        return false;
+        //ignore
       }
+      return false;
     }
 
     private void SetApplicationStartWithSystem(bool enabled) {
       try {
         using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true)) {
-          if (enabled)
-            key.SetValue("AutoVPNConnect", Application.ExecutablePath);
-          else
-            key.DeleteValue("AutoVPNConnect", false);
+          if (key != null) {
+            if (enabled)
+              key.SetValue(Updater.ApplicationName, Application.ExecutablePath);
+            else
+              key.DeleteValue(Updater.ApplicationName, false);
+          }
         }
       }
       catch (Exception ex) {
@@ -130,39 +78,18 @@ namespace AutoVPNConnect {
     }
 
     public string VpnConnectionName {
-      get => vpnConnectionName;
-      set {
-        if (vpnConnectionName == value) return;
-        vpnConnectionName = value;
-        WriteSettings();
-      }
+      get => settings.GetValue("VPNConnectionName", "No settings found");
+      set => settings.SetValue("VPNConnectionName", value);
     }
 
     public string UserName {
-      get => username;
-      set {
-        if (username == value) return;
-        username = value;
-        WriteSettings();
-      }
+      get => settings.GetValue("Username", "");
+      set => settings.SetValue("Username", value);
     }
 
     public string Password {
-      get => password;
-      set {
-        if (password == value) return;
-        password = value;
-        WriteSettings();
-      }
-    }
-
-    public string Theme {
-      get => theme;
-      set {
-        if (theme == value) return;
-        theme = value;
-        WriteSettings();
-      }
+      get => Decrypt(settings.GetValue("Password", "")) ?? "";
+      set => settings.SetValue("Password", Encrypt(value));
     }
 
     public bool AutoStartApp {
@@ -171,30 +98,8 @@ namespace AutoVPNConnect {
     }
 
     public bool Reconnect {
-      get => reconnect;
-      set {
-        if (reconnect == value) return;
-        reconnect = value;
-        WriteSettings();
-      }
-    }
-
-    public bool RunInBackground {
-      get => runInBackground;
-      set {
-        if (runInBackground == value) return;
-        runInBackground = value;
-        WriteSettings();
-      }
-    }
-
-    public bool AlwaysOnTop {
-      get => alwaysOnTop;
-      set {
-        if (alwaysOnTop == value) return;
-        alwaysOnTop = value;
-        WriteSettings();
-      }
+      get => settings.GetValue("ApplicationEnabled", false);
+      set => settings.SetValue("ApplicationEnabled", value);
     }
   }
 }

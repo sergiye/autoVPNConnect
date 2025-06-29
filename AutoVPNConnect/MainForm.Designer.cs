@@ -189,7 +189,7 @@
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Auto VPN Connect";
       this.TransparencyKey = System.Drawing.SystemColors.ActiveBorder;
-      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AutoVPNConnect_FormClosing);
+      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_Closing);
       this.ResumeLayout(false);
       this.PerformLayout();
 

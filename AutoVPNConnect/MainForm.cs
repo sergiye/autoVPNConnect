@@ -1,9 +1,7 @@
 ﻿using sergiye.Common;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,6 +10,7 @@ namespace AutoVPNConnect {
 
   public partial class MainForm : Form {
 
+    private readonly PersistentSettings settings;
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
     private readonly NotifyIcon mNotifyIcon;
@@ -22,7 +21,7 @@ namespace AutoVPNConnect {
     private readonly Icon greenIcon;
     private readonly Icon redIcon;
     private readonly Icon yellowIcon;
-    private bool showApp = false;
+    private bool showApp;
 
     #region form decoration
 
@@ -67,7 +66,7 @@ namespace AutoVPNConnect {
             Updater.VisitAppSite();
             break;
           case SysMenuTopMost:
-            ToggleTopMost(null, EventArgs.Empty);
+            ToggleTopMost();
             break;
         }
       }
@@ -76,8 +75,9 @@ namespace AutoVPNConnect {
       }
     }
 
-    private void ToggleTopMost(object sender, EventArgs e) {
-      mSettingsManager.AlwaysOnTop = TopMost = !TopMost;
+    private void ToggleTopMost() {
+      TopMost = !TopMost;
+      settings.SetValue("AlwaysOnTop", TopMost);
       var hSysMenu = WinApiHelper.GetSystemMenu(Handle, false);
       WinApiHelper.CheckMenuItem(hSysMenu, SysMenuTopMost, TopMost ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED);
     }
@@ -104,7 +104,9 @@ namespace AutoVPNConnect {
       Text = Updater.ApplicationTitle;
       themeMenuItem = new MenuItem("&Themes");
 
-      mSettingsManager = new SettingsManager();
+      settings = new PersistentSettings();
+      settings.Load();
+      mSettingsManager = new SettingsManager(settings);
       mConnectionManager = new ConnectionManager(ref mSettingsManager);
       mConnectionManager.OnStatusChanged += UpdateUI;
 
@@ -116,12 +118,12 @@ namespace AutoVPNConnect {
         yellowIcon = new Icon(st);
       }
 
-      TopMost = mSettingsManager.AlwaysOnTop;
+      TopMost = settings.GetValue("AlwaysOnTop", false);
       if (mSettingsManager.IsConnectionConfigured == false) {
         lblConnectionStatus.Text = "Connection status: Disconnected";
       }
 
-      menuItemAutoStart = new ToolStripMenuItem(cbxAutoStart.Text, null, (s, e) => { cbxAutoStart.Checked = !cbxAutoStart.Checked; });
+      menuItemAutoStart = new ToolStripMenuItem(cbxAutoStart.Text, null, (_, _) => { cbxAutoStart.Checked = !cbxAutoStart.Checked; });
       menuItemReconnect = new ToolStripMenuItem("Restore connection", null, menuReconnect_Click);
       menuItemConnect = new ToolStripMenuItem("Connect", null, btnToggle_Click);
       btnToggle.Click += btnToggle_Click;
@@ -137,9 +139,9 @@ namespace AutoVPNConnect {
           menuItemAutoStart,
           menuItemReconnect,
           new ToolStripSeparator(),
-          new ToolStripMenuItem("Site", null, (s, e) => Updater.VisitAppSite()),
-          new ToolStripMenuItem("Check for updates", null, (s, e) => Updater.CheckForUpdates(false)),
-          new ToolStripMenuItem("About…", null, (s, e) => Updater.ShowAbout()),
+          new ToolStripMenuItem("Site", null, (_, _) => Updater.VisitAppSite()),
+          new ToolStripMenuItem("Check for updates", null, (_, _) => Updater.CheckForUpdates(false)),
+          new ToolStripMenuItem("About…", null, (_, _) => Updater.ShowAbout()),
           new ToolStripSeparator(),
           new ToolStripMenuItem("Exit", null, toolStripMenuItemExit_Click)
         }
@@ -148,9 +150,12 @@ namespace AutoVPNConnect {
       mNotifyIcon.MouseDoubleClick += menuItemShowHide_Click;
       cbxAutoStart.Checked = mSettingsManager.AutoStartApp;
       cbxReconnect.Checked = mSettingsManager.Reconnect;
-      cbxRunInBackground.Checked = mSettingsManager.RunInBackground;
+
+      cbxRunInBackground.Checked = settings.GetValue("StartApplicationMinimized", false);
       showApp = !cbxRunInBackground.Checked;
 
+      ResizeEnd += MainForm_ResizeEnd;
+      
       Updater.Subscribe(
         (message, isError) => { MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information); },
         (message) => { return MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK; },
@@ -170,8 +175,10 @@ namespace AutoVPNConnect {
     #region themes
 
     private void OnThemeCurrentChanged() {
-      mSettingsManager.Theme = Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id;
+      Visible = false;
+      settings.SetValue("Theme", Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id);
       UpdateUI();
+      Visible = showApp;
     }
 
     private void InitializeTheme() {
@@ -187,7 +194,7 @@ namespace AutoVPNConnect {
         themeMenuItem.MenuItems.Add(item);
         item.Tag = theme;
         return item;
-      }, OnThemeCurrentChanged, mSettingsManager.Theme, "AutoVPNConnect.themes");
+      }, OnThemeCurrentChanged, settings.GetValue("Theme", ""), Updater.ApplicationName + ".themes");
       WinApiHelper.InsertMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
       currentItem?.PerformClick();
       Theme.Current.Apply(this);
@@ -257,7 +264,7 @@ namespace AutoVPNConnect {
     }
 
     private void cbxRunInBackground_CheckedChanged(object sender, EventArgs e) {
-      mSettingsManager.RunInBackground = cbxRunInBackground.Checked;
+      settings.SetValue("StartApplicationMinimized", cbxRunInBackground.Checked);
       mNotifyIcon.Visible = cbxRunInBackground.Checked;
     }
 
@@ -275,7 +282,7 @@ namespace AutoVPNConnect {
       var isConnected = mConnectionManager?.VpnIsConnected() ?? false;
       var isConnectedText = isConnecting ? "Busy" : isConnected ? "Connected" : "Disconnected";
       btnToggle.Text = menuItemConnect.Text = isConnected ? "Disconnect" : "Connect";
-      btnToggle.Enabled = menuItemConnect.Enabled = !string.IsNullOrEmpty(connectionName) && !mConnectionManager.IsBusy;
+      btnToggle.Enabled = menuItemConnect.Enabled = !string.IsNullOrEmpty(connectionName) && !isConnecting;
 
       if (!string.IsNullOrEmpty(connectionName)) {
         cmbConnections.Items.Add(connectionName);
@@ -294,7 +301,7 @@ namespace AutoVPNConnect {
       //mNotifyIcon.BalloonTipText = $"{Updater.ApplicationTitle} runs in background";
       //mNotifyIcon.ShowBalloonTip(1000);
 
-      if (!string.IsNullOrEmpty(mSettingsManager.UserName))
+      if (!string.IsNullOrEmpty(mSettingsManager?.UserName))
         textBoxUsername.Text = mSettingsManager.UserName;
       //if (!string.IsNullOrEmpty(mSettingsManager.Password))
       //  textBoxPassword.Text = mSettingsManager.Password;
@@ -326,7 +333,7 @@ namespace AutoVPNConnect {
       Environment.Exit(0);
     }
 
-    private void AutoVPNConnect_FormClosing(object sender, FormClosingEventArgs e) {
+    private void MainForm_Closing(object sender, FormClosingEventArgs e) {
       if (cbxRunInBackground.Checked) {
         showApp = false;
         Visible = false;
