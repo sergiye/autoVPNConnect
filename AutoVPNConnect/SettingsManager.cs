@@ -84,12 +84,12 @@ namespace AutoVPNConnect {
 
     public string UserName {
       get => settings.GetValue("Username", "");
-      set => settings.SetValue("Username", value);
+      set => settings.SetValue("Username", value ?? "");
     }
 
     public string Password {
-      get => Decrypt(settings.GetValue("Password", "")) ?? "";
-      set => settings.SetValue("Password", Encrypt(value));
+      get => Decrypt(settings.GetValue("Password", ""));
+      set => settings.SetValue("Password", Encrypt(value) ?? "");
     }
 
     public bool AutoStartApp {
