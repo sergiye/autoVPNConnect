@@ -58,7 +58,6 @@
       this.cbxRunInBackground.TabIndex = 11;
       this.cbxRunInBackground.Text = "Run in background";
       this.cbxRunInBackground.UseVisualStyleBackColor = true;
-      this.cbxRunInBackground.CheckedChanged += new System.EventHandler(this.cbxRunInBackground_CheckedChanged);
       // 
       // cbxReconnect
       // 

@@ -151,8 +151,12 @@ namespace AutoVPNConnect {
       cbxAutoStart.Checked = mSettingsManager.AutoStartApp;
       cbxReconnect.Checked = mSettingsManager.Reconnect;
 
-      cbxRunInBackground.Checked = settings.GetValue("StartApplicationMinimized", false);
-      showApp = !cbxRunInBackground.Checked;
+      var runInBackground = new UserOption("StartApplicationMinimized", false, cbxRunInBackground, settings);
+      runInBackground.Changed += (_, _) => {
+        mNotifyIcon.Visible = cbxRunInBackground.Checked;
+      };
+      showApp = !runInBackground.Value;
+      mNotifyIcon.Visible = runInBackground.Value;
 
       ResizeEnd += MainForm_ResizeEnd;
       
@@ -223,7 +227,7 @@ namespace AutoVPNConnect {
         }
         else {
           var connectionName = mSettingsManager.VpnConnectionName;
-          if (!string.IsNullOrEmpty(connectionName))
+          if (!connectionName.IsNullOrEmpty())
             cmbConnections.Items.Add(connectionName);
         }
       }
@@ -234,7 +238,7 @@ namespace AutoVPNConnect {
       var userName = textBoxUsername.Text;
       var password = textBoxPassword.Text;
 
-      if (string.IsNullOrEmpty(vpnConnectionName)) {
+      if (vpnConnectionName.IsNullOrEmpty()) {
         MessageBox.Show("Connection is not configured", Updater.ApplicationTitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
       else {
@@ -263,11 +267,6 @@ namespace AutoVPNConnect {
       }
     }
 
-    private void cbxRunInBackground_CheckedChanged(object sender, EventArgs e) {
-      settings.SetValue("StartApplicationMinimized", cbxRunInBackground.Checked);
-      mNotifyIcon.Visible = cbxRunInBackground.Checked;
-    }
-
     private void UpdateUI() {
 
       if (this.InvokeRequired) {
@@ -282,7 +281,7 @@ namespace AutoVPNConnect {
       var isConnected = mConnectionManager?.VpnIsConnected() ?? false;
       var isConnectedText = isConnecting ? "Busy" : isConnected ? "Connected" : "Disconnected";
       btnToggle.Text = menuItemConnect.Text = isConnected ? "Disconnect" : "Connect";
-      btnToggle.Enabled = menuItemConnect.Enabled = !string.IsNullOrEmpty(connectionName) && !isConnecting;
+      btnToggle.Enabled = menuItemConnect.Enabled = !connectionName.IsNullOrEmpty() && !isConnecting;
 
       if (!string.IsNullOrEmpty(connectionName)) {
         cmbConnections.Items.Add(connectionName);
@@ -294,7 +293,7 @@ namespace AutoVPNConnect {
 
       this.Icon = mNotifyIcon.Icon = isConnecting ? yellowIcon : isConnected ? greenIcon : redIcon;
       mNotifyIcon.Text = Updater.ApplicationTitle;
-      if (!string.IsNullOrEmpty(connectionName)) {
+      if (!connectionName.IsNullOrEmpty()) {
         mNotifyIcon.Text += $"\n{connectionName} - {isConnectedText}";
       }
       //mNotifyIcon.BalloonTipTitle = Updater.ApplicationTitle;
