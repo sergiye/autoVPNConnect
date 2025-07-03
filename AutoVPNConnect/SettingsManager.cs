@@ -51,7 +51,7 @@ namespace AutoVPNConnect {
         using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")) {
           if (key != null) {
             var regValue = key.GetValue(Updater.ApplicationName)?.ToString();
-            return regValue == Updater.CurrentFileLocation;
+            return Updater.CurrentFileLocation.Equals(regValue, StringComparison.OrdinalIgnoreCase);
           }
         }
       }
