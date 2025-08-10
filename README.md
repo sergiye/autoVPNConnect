@@ -43,9 +43,5 @@ If you have any suggestions or improvements, don't hesitate to create an issue.
 
 Also, don't forget to star the repository to help other people find it.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=sergiye/AutoVPNConnect&type=Date)](https://star-history.com/#sergiye/AutoVPNConnect&Date)
-
-[![Stargazers repo roster for @sergiye/AutoVPNConnect](https://reporoster.com/stars/sergiye/AutoVPNConnect)](https://github.com/sergiye/AutoVPNConnect/stargazers)
-
 ## Donate!
 Every [cup of coffee](https://patreon.com/SergiyE) you donate will help this app become better and let me know that this project is in demand.
