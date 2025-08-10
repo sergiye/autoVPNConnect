@@ -21,6 +21,9 @@ jobs:
             buildprops:
               - 'Directory.Build.props'
 
+      - name: NuGet restore
+        run: nuget restore AutoVPNConnect.sln
+
       - name: Build
         run: msbuild AutoVPNConnect.sln -p:Configuration=Release -m
 
