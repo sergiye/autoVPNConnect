@@ -39,9 +39,8 @@
     <EmbeddedResource Include="Resources\Red.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="sergiye.Common.UI">
-      <Version>1.*</Version>
-    </PackageReference>
+    <PackageReference Include="sergiye.Common" Version="1.*" />
+    <PackageReference Include="sergiye.Common.UI" Version="1.*" />
     <PackageReference Include="Costura.Fody">
       <PrivateAssets>all</PrivateAssets>
       <Version>4.1.0</Version>
