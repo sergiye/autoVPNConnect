@@ -28,7 +28,6 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\themes\*.json" Link="themes\%(Filename)%(Extension)" />
     <Compile Update="*Form.cs" SubType="Form" />
     <Compile Update="MainForm.Designer.cs" DependentUpon="MainForm.cs" />
     <EmbeddedResource Update="MainForm.resx" DependentUpon="MainForm.cs" />
@@ -39,8 +38,8 @@
     <EmbeddedResource Include="Resources\Red.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="sergiye.Common" Version="1.*" />
-    <PackageReference Include="sergiye.Common.UI" Version="1.*" />
+    <PackageReference Include="SergiyE.Common" Version="1.*" />
+    <PackageReference Include="SergiyE.Common.UI" Version="1.*" />
     <PackageReference Include="Costura.Fody">
       <PrivateAssets>all</PrivateAssets>
       <Version>4.1.0</Version>

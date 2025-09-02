@@ -13,7 +13,7 @@ namespace AutoVPNConnect {
     private readonly PersistentSettings settings;
     private readonly SettingsManager mSettingsManager;
     private readonly ConnectionManager mConnectionManager;
-    private readonly NotifyIcon mNotifyIcon;
+    private readonly NotifyIconAdv mNotifyIcon;
     private readonly ToolStripMenuItem menuItemAutoStart;
     private readonly ToolStripMenuItem menuItemReconnect;
     private readonly ToolStripMenuItem menuItemConnect;
@@ -60,7 +60,7 @@ namespace AutoVPNConnect {
             Updater.ShowAbout();
             break;
           case SysMenuCheckUpdates:
-            Updater.CheckForUpdates(false);
+            Updater.CheckForUpdates(Updater.CheckUpdatesMode.AllMessages);
             break;
           case SysMenuAppSite:
             Updater.VisitAppSite();
@@ -127,7 +127,7 @@ namespace AutoVPNConnect {
       menuItemReconnect = new ToolStripMenuItem("Restore connection", null, menuReconnect_Click);
       menuItemConnect = new ToolStripMenuItem("Connect", null, btnToggle_Click);
       btnToggle.Click += btnToggle_Click;
-      mNotifyIcon = new NotifyIcon(components) {
+      mNotifyIcon = new NotifyIconAdv() {
         ContextMenuStrip = new ContextMenuStrip(),
         Icon = yellowIcon ?? Icon,
       };
@@ -140,7 +140,7 @@ namespace AutoVPNConnect {
           menuItemReconnect,
           new ToolStripSeparator(),
           new ToolStripMenuItem("Site", null, (_, _) => Updater.VisitAppSite()),
-          new ToolStripMenuItem("Check for updates", null, (_, _) => Updater.CheckForUpdates(false)),
+          new ToolStripMenuItem("Check for updates", null, (_, _) => Updater.CheckForUpdates(Updater.CheckUpdatesMode.AllMessages)),
           new ToolStripMenuItem("About…", null, (_, _) => Updater.ShowAbout()),
           new ToolStripSeparator(),
           new ToolStripMenuItem("Exit", null, toolStripMenuItemExit_Click)
@@ -167,10 +167,9 @@ namespace AutoVPNConnect {
       );
       var timer = new Timer();
       timer.Tick += async (_, _) => {
-        timer.Enabled = false;
-        timer.Enabled = !await Updater.CheckForUpdatesAsync(true);
+        await Updater.CheckForUpdatesAsync(Updater.CheckUpdatesMode.AutoUpdate);
       };
-      timer.Interval = 3000;
+      timer.Interval = 1000 * 60 * 60 * 24;
       timer.Enabled = true;
 
       InitializeTheme();
