@@ -163,14 +163,11 @@ namespace AutoVPNConnect {
       Updater.Subscribe(
         (message, isError) => { MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information); },
         (message) => { return MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK; },
-        Application.Exit
+        () => { toolStripMenuItemExit_Click(null, EventArgs.Empty); }
       );
-      var timer = new Timer();
-      timer.Tick += async (_, _) => {
-        await Updater.CheckForUpdatesAsync(Updater.CheckUpdatesMode.AutoUpdate);
-      };
-      timer.Interval = 1000 * 60 * 60 * 24;
-      timer.Enabled = true;
+      var timer = new System.Threading.Timer((_) => {
+        Updater.CheckForUpdates(Updater.CheckUpdatesMode.AutoUpdate);
+      }, null, 10 * 1000, 1000 * 60 * 60 * 24);
 
       InitializeTheme();
     }
