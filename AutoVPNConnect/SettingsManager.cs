@@ -20,30 +20,36 @@ namespace AutoVPNConnect {
       if (string.IsNullOrEmpty(value))
         return null;
 
-      var inputArray = Encoding.UTF8.GetBytes(value);
-      var tripleDes = new TripleDESCryptoServiceProvider();
-      tripleDes.Key = Encoding.UTF8.GetBytes(encryptionKey);
-      tripleDes.Mode = CipherMode.ECB;
-      tripleDes.Padding = PaddingMode.PKCS7;
-      var cTransform = tripleDes.CreateEncryptor();
-      var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
-      tripleDes.Clear();
-      return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+      using (var tripleDes = new TripleDESCryptoServiceProvider {
+        Key = Encoding.UTF8.GetBytes(encryptionKey),
+        Mode = CipherMode.ECB,
+        Padding = PaddingMode.PKCS7
+      }) {
+        using (var cTransform = tripleDes.CreateEncryptor()) {
+          var inputArray = Encoding.UTF8.GetBytes(value);
+          var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
+          tripleDes.Clear();
+          return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+        }
+      }
     }
 
     private static string Decrypt(string encryptedPassword) {
       if (string.IsNullOrEmpty(encryptedPassword))
         return encryptedPassword;
 
-      var inputArray = Convert.FromBase64String(encryptedPassword);
-      var tripleDes = new TripleDESCryptoServiceProvider();
-      tripleDes.Key = Encoding.UTF8.GetBytes(encryptionKey);
-      tripleDes.Mode = CipherMode.ECB;
-      tripleDes.Padding = PaddingMode.PKCS7;
-      var cTransform = tripleDes.CreateDecryptor();
-      var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
-      tripleDes.Clear();
-      return Encoding.UTF8.GetString(resultArray);
+      using (var tripleDes = new TripleDESCryptoServiceProvider {
+        Key = Encoding.UTF8.GetBytes(encryptionKey),
+        Mode = CipherMode.ECB,
+        Padding = PaddingMode.PKCS7
+      }) {
+        using (var cTransform = tripleDes.CreateDecryptor()) {
+          var inputArray = Convert.FromBase64String(encryptedPassword);
+          var resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
+          tripleDes.Clear();
+          return Encoding.UTF8.GetString(resultArray);
+        }
+      }
     }
 
     private bool GetApplicationStartWithSystem() {

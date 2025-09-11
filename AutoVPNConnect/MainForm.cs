@@ -170,6 +170,13 @@ namespace AutoVPNConnect {
       }, null, 10 * 1000, 1000 * 60 * 60 * 24);
 
       InitializeTheme();
+
+      if (mSettingsManager.AutoStartApp && !mSettingsManager.Reconnect && !showApp) {
+        //auto-connect on first start
+        Task.Run(() => {
+          mConnectionManager?.RestoreConnection();
+        });
+      }
     }
 
     #region themes
