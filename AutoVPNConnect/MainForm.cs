@@ -100,7 +100,7 @@ namespace AutoVPNConnect {
       InitializeComponent();
 
       Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
-      greenIcon = this.Icon;
+      greenIcon = Icon;
       Text = Updater.ApplicationTitle;
       themeMenuItem = new MenuItem("&Themes");
 
@@ -112,10 +112,10 @@ namespace AutoVPNConnect {
 
       var assembly = Assembly.GetExecutingAssembly();
       using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Resources.Red.ico")) {
-        redIcon = new Icon(st);
+        if (st != null) redIcon = new Icon(st);
       }
       using (var st = assembly.GetManifestResourceStream("AutoVPNConnect.Resources.Yellow.ico")) {
-        yellowIcon = new Icon(st);
+        if (st != null) yellowIcon = new Icon(st);
       }
 
       TopMost = settings.GetValue("AlwaysOnTop", false);
@@ -127,7 +127,7 @@ namespace AutoVPNConnect {
       menuItemReconnect = new ToolStripMenuItem("Restore connection", null, menuReconnect_Click);
       menuItemConnect = new ToolStripMenuItem("Connect", null, btnToggle_Click);
       btnToggle.Click += btnToggle_Click;
-      mNotifyIcon = new NotifyIconAdv() {
+      mNotifyIcon = new NotifyIconAdv {
         ContextMenuStrip = new ContextMenuStrip(),
         Icon = yellowIcon ?? Icon,
       };
@@ -161,14 +161,18 @@ namespace AutoVPNConnect {
       ResizeEnd += MainForm_ResizeEnd;
       
       Updater.Subscribe(
-        (message, isError) => { MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information); },
-        (message) => { return MessageBox.Show(message, Updater.ApplicationTitle, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK; },
-        () => { toolStripMenuItemExit_Click(null, EventArgs.Empty); }
+        (message, isError) => {
+          if (InvokeRequired)
+            Invoke(new Action(() => MessageBox.Show(message, Updater.ApplicationName, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information)));
+          else
+            MessageBox.Show(message, Updater.ApplicationName, MessageBoxButtons.OK, isError ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+        },
+        message => InvokeRequired
+          ? (bool)Invoke(new Func<bool>(() => MessageBox.Show(this, message, Updater.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK))
+          : MessageBox.Show(this, message, Updater.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK,
+        () => toolStripMenuItemExit_Click(null, EventArgs.Empty)
       );
-      var timer = new System.Threading.Timer((_) => {
-        Updater.CheckForUpdates(Updater.CheckUpdatesMode.AutoUpdate);
-      }, null, 10 * 1000, 1000 * 60 * 60 * 24);
-
+      
       InitializeTheme();
 
       if (mSettingsManager.AutoStartApp && !mSettingsManager.Reconnect && !showApp) {
@@ -272,11 +276,9 @@ namespace AutoVPNConnect {
 
     private void UpdateUI() {
 
-      if (this.InvokeRequired) {
-        if (InvokeRequired) {
-          Invoke(new Action(UpdateUI));
-          return;
-        }
+      if (InvokeRequired) {
+        Invoke(new Action(UpdateUI));
+        return;
       }
 
       var connectionName = mSettingsManager?.VpnConnectionName;
@@ -294,7 +296,7 @@ namespace AutoVPNConnect {
       lblConnectionStatus.Text = "Connection status: " + isConnectedText;
       lblConnectionStatus.ForeColor = isConnecting ? Theme.Current.InfoColor : isConnected ? Theme.Current.MessageColor : Theme.Current.WarnColor;
 
-      this.Icon = mNotifyIcon.Icon = isConnecting ? yellowIcon : isConnected ? greenIcon : redIcon;
+      Icon = mNotifyIcon.Icon = isConnecting ? yellowIcon : isConnected ? greenIcon : redIcon;
       mNotifyIcon.Text = Updater.ApplicationTitle;
       if (!connectionName.IsNullOrEmpty()) {
         mNotifyIcon.Text += $"\n{connectionName} - {isConnectedText}";
