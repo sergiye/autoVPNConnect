@@ -104,6 +104,8 @@ namespace AutoVPNConnect {
       Text = Updater.ApplicationTitle;
       themeMenuItem = new MenuItem("&Themes");
 
+      // TaskbarProgressHelper.Handle = this.Handle;
+
       settings = new PersistentSettings();
       settings.Load();
       mSettingsManager = new SettingsManager(settings);
@@ -297,6 +299,7 @@ namespace AutoVPNConnect {
       lblConnectionStatus.ForeColor = isConnecting ? Theme.Current.InfoColor : isConnected ? Theme.Current.MessageColor : Theme.Current.WarnColor;
 
       Icon = mNotifyIcon.Icon = isConnecting ? yellowIcon : isConnected ? greenIcon : redIcon;
+      // TaskbarProgressHelper.SetOverlay(Icon.Handle, this.Handle, "test");
       mNotifyIcon.Text = Updater.ApplicationTitle;
       if (!connectionName.IsNullOrEmpty()) {
         mNotifyIcon.Text += $"\n{connectionName} - {isConnectedText}";
@@ -343,6 +346,9 @@ namespace AutoVPNConnect {
         Visible = false;
         e.Cancel = true;
       }
+      // else {
+      //   TaskbarProgressHelper.ClearOverlay();
+      // }
     }
   }
 }

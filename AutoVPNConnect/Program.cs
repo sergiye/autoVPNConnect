@@ -1,13 +1,19 @@
 ﻿using sergiye.Common;
 using System;
+// using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace AutoVPNConnect {
   static class Program {
+
+    // [DllImport("shell32.dll")]
+    // public static extern int SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string AppID);
+
     [STAThread]
     static void Main() {
 
       Crasher.Listen();
+      // SetCurrentProcessExplicitAppUserModelID(Updater.ApplicationCompany + "." + Updater.ApplicationName);
 
       if (!OperatingSystemHelper.IsCompatible(true, out var errorMessage, out var fixAction)) {
         if (fixAction != null) {
