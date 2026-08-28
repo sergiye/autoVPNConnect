@@ -15,7 +15,7 @@ namespace AutoVPNConnect {
       Crasher.Listen();
       // SetCurrentProcessExplicitAppUserModelID(Updater.ApplicationCompany + "." + Updater.ApplicationName);
 
-      if (!OperatingSystemHelper.IsCompatible(true, out var errorMessage, out var fixAction)) {
+      if (!OSHelper.IsCompatible(true, out var errorMessage, out var fixAction)) {
         if (fixAction != null) {
           if (MessageBox.Show(errorMessage, Updater.ApplicationTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) {
             fixAction?.Invoke();
