@@ -17,7 +17,6 @@ namespace AutoVPNConnect {
     private readonly ToolStripMenuItem menuItemAutoStart;
     private readonly ToolStripMenuItem menuItemReconnect;
     private readonly ToolStripMenuItem menuItemConnect;
-    private readonly MenuItem themeMenuItem;
     private readonly Icon greenIcon;
     private readonly Icon redIcon;
     private readonly Icon yellowIcon;
@@ -44,8 +43,6 @@ namespace AutoVPNConnect {
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_SEPARATOR, 0, string.Empty);
       var checkedAttr = TopMost ? WinApiHelper.MF_CHECKED : WinApiHelper.MF_UNCHECKED;
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | checkedAttr, SysMenuTopMost, "Always on top");
-      WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
-      themeMenuItem.Tag = menuIndex;
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuAppSite, "Site");
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuCheckUpdates, "Check for updates");
       WinApiHelper.InsertMenu(hSysMenu, ++menuIndex, WinApiHelper.MF_BY_POSITION, SysMenuAboutId, "About…");
@@ -102,7 +99,6 @@ namespace AutoVPNConnect {
       Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
       greenIcon = Icon;
       Text = Updater.ApplicationTitle;
-      themeMenuItem = new MenuItem("&Themes");
 
       // TaskbarProgressHelper.Handle = this.Handle;
 
@@ -174,8 +170,8 @@ namespace AutoVPNConnect {
           : MessageBox.Show(this, message, Updater.ApplicationName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK,
         () => toolStripMenuItemExit_Click(null, EventArgs.Empty)
       );
-      
-      InitializeTheme();
+
+      UpdateUI();
 
       //if (mSettingsManager.AutoStartApp && !mSettingsManager.Reconnect && !showApp) {
       //  //auto-connect on first start
@@ -184,36 +180,6 @@ namespace AutoVPNConnect {
       //  });
       //}
     }
-
-    #region themes
-
-    private void OnThemeCurrentChanged() {
-      Visible = false;
-      settings.SetValue("Theme", Theme.IsAutoThemeEnabled ? "auto" : Theme.Current.Id);
-      UpdateUI();
-      Visible = showApp;
-    }
-
-    private void InitializeTheme() {
-
-      mNotifyIcon.ContextMenuStrip.Renderer = new ThemedToolStripRenderer();
-
-      var menuHandle = WinApiHelper.GetSystemMenu(Handle, false);
-      WinApiHelper.RemoveMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION);
-      themeMenuItem.MenuItems.Clear();
-
-      var currentItem = CustomTheme.FillThemesMenu((text, theme, onClick) => {
-        var item = new RadioButtonMenuItem(text, onClick);
-        themeMenuItem.MenuItems.Add(item);
-        item.Tag = theme;
-        return item;
-      }, OnThemeCurrentChanged, settings.GetValue("Theme", ""), Updater.ApplicationName + ".themes");
-      WinApiHelper.InsertMenu(menuHandle, (uint)themeMenuItem.Tag, WinApiHelper.MF_BY_POSITION | WinApiHelper.MF_POPUP, (int)themeMenuItem.Handle, themeMenuItem.Text);
-      currentItem?.PerformClick();
-      Theme.Current.Apply(this);
-    }
-
-    #endregion
 
     private void btnToggle_Click(object sender, EventArgs e) {
       btnToggle.Enabled = menuItemConnect.Enabled = false;
@@ -296,7 +262,7 @@ namespace AutoVPNConnect {
       }
 
       lblConnectionStatus.Text = "Connection status: " + isConnectedText;
-      lblConnectionStatus.ForeColor = isConnecting ? Theme.Current.InfoColor : isConnected ? Theme.Current.MessageColor : Theme.Current.WarnColor;
+      lblConnectionStatus.ForeColor = isConnecting ? Color.Blue: isConnected ? Color.Green : Color.Orange;
 
       Icon = mNotifyIcon.Icon = isConnecting ? yellowIcon : isConnected ? greenIcon : redIcon;
       // TaskbarProgressHelper.SetOverlay(Icon.Handle, this.Handle, "test");
