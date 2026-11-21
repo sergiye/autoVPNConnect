@@ -15,12 +15,15 @@
     <Prefer32Bit>true</Prefer32Bit>
     <Deterministic>false</Deterministic>
     <OutputPath>bin\</OutputPath>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <GenerateSupportedRuntime>false</GenerateSupportedRuntime>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
@@ -37,9 +40,28 @@
     <EmbeddedResource Include="Resources\Yellow.ico" />
     <EmbeddedResource Include="Resources\Red.ico" />
   </ItemGroup>
-  <ItemGroup>
+  <PropertyGroup>
+    <CommonSourcesDir>$(MSBuildThisFileDirectory)..\..\common\</CommonSourcesDir>
+    <UseLocalCommon Condition="'$(UseLocalCommon)' == '' And Exists('$(CommonSourcesDir)sergiye.Common')">true</UseLocalCommon>
+    <UseLocalCommon Condition="'$(UseLocalCommon)' == ''">false</UseLocalCommon>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseLocalCommon)' == 'true'">
+    <Compile Include="$(CommonSourcesDir)sergiye.Common\Extensions\JsonExtensions.cs" Link="Common\JsonExtensions.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common\Extensions\StringExtensions.cs" Link="Common\StringExtensions.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common\Tools\Updater.cs" Link="Common\Updater.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common\Tools\OSHelper.cs" Link="Common\OSHelper.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common\Tools\ISettings.cs" Link="Common\ISettings.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common\Tools\Crasher.cs" Link="Common\Crasher.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common\Win\WinApiHelper.cs" Link="Common\WinApiHelper.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\PersistentSettings.cs" Link="Common\PersistentSettings.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\UserOption.cs" Link="Common\UserOption.cs" />
+    <Compile Include="$(CommonSourcesDir)sergiye.Common.UI\NotifyIconAdv.cs" Link="Common\NotifyIconAdv.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseLocalCommon)' != 'true'">
     <PackageReference Include="SergiyE.Common" Version="1.*" />
     <PackageReference Include="SergiyE.Common.UI" Version="1.*" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Costura.Fody">
       <PrivateAssets>all</PrivateAssets>
       <Version>4.1.0</Version>
