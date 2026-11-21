@@ -262,7 +262,7 @@ namespace AutoVPNConnect {
       }
 
       lblConnectionStatus.Text = "Connection status: " + isConnectedText;
-      lblConnectionStatus.ForeColor = isConnecting ? Color.Blue: isConnected ? Color.Green : Color.Orange;
+      lblConnectionStatus.ForeColor = isConnecting ? Color.Blue: isConnected ? Color.Green : Color.Firebrick;
 
       Icon = mNotifyIcon.Icon = isConnecting ? yellowIcon : isConnected ? greenIcon : redIcon;
       // TaskbarProgressHelper.SetOverlay(Icon.Handle, this.Handle, "test");
